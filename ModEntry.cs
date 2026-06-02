@@ -91,6 +91,10 @@ namespace observeSpaceTest
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             //helper.Events.Player.Warped += OnPlayerWarped;
             helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+            // Loading a save overwrites Game1.options (incl. pauseWhenOutOfFocus) with the
+            // values stored in the save, undoing the Entry() set above. Re-apply it once the
+            // save has loaded so the game keeps ticking while its window is unfocused.
+            helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.Display.MenuChanged += OnMenuChanged;
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             helper.ConsoleCommands.Add("give_tool_1", "give the player a tool", giveTool);
@@ -712,6 +716,13 @@ namespace observeSpaceTest
         private void OnDayStarted(object? sender, DayStartedEventArgs e)
         {
             Actions.recordDayStart();
+        }
+
+        private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
+        {
+            // The save just clobbered Game1.options; force the live value back to false so the
+            // game does not pause/freeze while running unfocused under the agent.
+            Game1.options.pauseWhenOutOfFocus = false;
         }
 
         private void StartAutoPathing(Vector2 targetTile)
