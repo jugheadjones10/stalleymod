@@ -2832,21 +2832,31 @@ namespace ActionSpace.actions
 
         public static List<TileInfo> GetSurroundings(int size)
         {
-            var playPoint = Game1.player.TilePoint;
-            int xI = playPoint.X;
-            int yI = playPoint.Y;
-
             var layer = Game1.player.currentLocation.Map.GetLayer("Back");
 
             int mapWidth = layer.LayerWidth;
             int mapHeight = layer.LayerHeight;
-            int minX = Math.Max(0, xI - size);
-            int maxX = Math.Min(mapWidth - 1, xI + size);
-            int minY = Math.Max(0, yI - size);
-            int maxY = Math.Min(mapHeight - 1, yI + size);
+
+            int minX, maxX, minY, maxY;
+            if (size < 0)
+            {
+                // Viewport mode: every tile currently on screen (matches the screenshot).
+                int tile = Game1.tileSize; // 64 px
+                minX = Math.Max(0, Game1.viewport.X / tile);
+                maxX = Math.Min(mapWidth - 1, (Game1.viewport.X + Game1.viewport.Width) / tile);
+                minY = Math.Max(0, Game1.viewport.Y / tile);
+                maxY = Math.Min(mapHeight - 1, (Game1.viewport.Y + Game1.viewport.Height) / tile);
+            }
+            else
+            {
+                var playPoint = Game1.player.TilePoint;
+                minX = Math.Max(0, playPoint.X - size);
+                maxX = Math.Min(mapWidth - 1, playPoint.X + size);
+                minY = Math.Max(0, playPoint.Y - size);
+                maxY = Math.Min(mapHeight - 1, playPoint.Y + size);
+            }
 
             var tileInfoList = new List<TileInfo>();
-
 
             // for counters info
             // List<CounterInfo> counters = new List<CounterInfo>();
