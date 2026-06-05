@@ -51,10 +51,10 @@ namespace ActionSpace.actions
                 mod.Helper.Events.Player.Warped -= OnWarped;
             }
             mod.Helper.Events.Player.Warped += OnWarped;
-            Action<bool> onComplete = (success) => {
+            Action<MoveResult> onComplete = (result) => {
                 LogToFile($"moving terminated by complete x:{xI}, y:{yI}", mod);
                 mod.Helper.Events.Player.Warped -= OnWarped;
-                taskCompletionSource.TrySetResult(success);
+                taskCompletionSource.TrySetResult(result.Success);
             };
             Actions.StartAutoPathing(new Vector2(xI, yI), onComplete, mod);
             LogToFile($"awaiting moving x:{xI}, y:{yI}", mod);
@@ -65,9 +65,12 @@ namespace ActionSpace.actions
             return success;
         }
 
-        public static async Task<bool> move_relative(string x, string y, Mod mod)
+        // Returns "true" on success, or "false%reason[:blocker]" on failure
+        // (e.g. "false%target_impassable:Stone", "false%unreachable", "false%npc_blocked").
+        // The Python ActionProxy.move parses this into (success, reason).
+        public static async Task<string> move_relative(string x, string y, Mod mod)
         {
-            var taskCompletionSource = new TaskCompletionSource<bool>();
+            var taskCompletionSource = new TaskCompletionSource<MoveResult>();
             int xRelative = int.Parse(x);
             int yRelative = int.Parse(y);
             int xOrigin = Game1.player.TilePoint.X;
@@ -78,22 +81,22 @@ namespace ActionSpace.actions
             {
                 if (!taskCompletionSource.Task.IsCompleted)
                 {
-                    taskCompletionSource.SetResult(true);
+                    taskCompletionSource.SetResult(new MoveResult(true, "ok"));
                 }
                 mod.Helper.Events.Player.Warped -= OnWarped;
             }
             mod.Helper.Events.Player.Warped += OnWarped;
-            Action<bool> onComplete = (success) => {
+            Action<MoveResult> onComplete = (result) => {
                 mod.Helper.Events.Player.Warped -= OnWarped;
                 if (!taskCompletionSource.Task.IsCompleted)
                 {
-                    taskCompletionSource.SetResult(success);
+                    taskCompletionSource.SetResult(result);
                 }
             };
             Actions.StartAutoPathing(new Vector2(xI, yI), onComplete, mod);
 
-            bool success = await taskCompletionSource.Task;
-            return success;
+            MoveResult result = await taskCompletionSource.Task;
+            return result.Success ? "true" : $"false%{result.Reason}";
         }
 
         public static async Task<bool> move_step(string direction, Mod mod)
