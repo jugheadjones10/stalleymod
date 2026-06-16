@@ -2046,6 +2046,7 @@ namespace ActionSpace.actions
             public string Name { get; set; }
             public int Health { get; set; }
             public float Stamina { get; set; }
+            public bool Exhausted { get; set; }
             public int Money { get; set; }
             public string Location { get; set; }
             public Point Position { get; set; }
@@ -2542,6 +2543,7 @@ namespace ActionSpace.actions
                 Name = Game1.player.Name,
                 Health = Game1.player.health,
                 Stamina = Game1.player.Stamina,
+                Exhausted = Game1.player.exhausted.Value,
                 Money = Game1.player.Money,
                 Location = Game1.player.currentLocation.Name,
                 Position = Game1.player.TilePoint,
