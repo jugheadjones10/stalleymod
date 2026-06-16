@@ -36,12 +36,15 @@ namespace observeSpaceTest
         private string? outputFilePath;
         private string? logFilePath;
 
+        // Current mod-log filename, shared by the instance LogToFile here and the static
+        // LogToFile helpers in Actions/ActionsAPI. Rotated per run in HandleMessageInMain so
+        // each run writes its own MyModLog_<timestamp>.txt instead of all runs appending to one
+        // ever-growing file (it had grown to ~200MB), which kept analyze_perf scoped to one run.
+        public static string LogFileName = "MyModLog.txt";
+
         private Vector2 targetTile;
 
-        private IReflectedMethod? drawMethod;
         private static int port = 10783;
-
-        private IModHelper? _helper;
 
         private static string mmapFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"shared_memory_{port}.bin");
 
@@ -51,15 +54,12 @@ namespace observeSpaceTest
             outputFilePath = Path.Combine(helper.DirectoryPath, "game_data.json");
             Monitor.Log($"mmapFilePath: {mmapFilePath}", LogLevel.Info);
 
-            logFilePath = Path.Combine(helper.DirectoryPath, "MyModLog.txt");
+            logFilePath = Path.Combine(helper.DirectoryPath, LogFileName);
 
             Global.mainMod = this;
-            _helper = helper;
 
             var harmony = new Harmony("com.xspadex.actionspace");
             harmony.PatchAll();
-
-            drawMethod = helper.Reflection.GetMethod(Game1.game1, "Draw", false);
 
             string[] args = Environment.GetCommandLineArgs();
             for (int i = 0; i < args.Length; i++)
@@ -91,12 +91,8 @@ namespace observeSpaceTest
             helper.Events.GameLoop.DayStarted += OnDayStarted;
             //helper.Events.Player.Warped += OnPlayerWarped;
             helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
-            // Loading a save overwrites Game1.options (incl. pauseWhenOutOfFocus) with the
-            // values stored in the save, undoing the Entry() set above. Re-apply it once the
-            // save has loaded so the game keeps ticking while its window is unfocused.
-            helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.Display.MenuChanged += OnMenuChanged;
-            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.ConsoleCommands.Add("give_tool_1", "give the player a tool", giveTool);
             helper.ConsoleCommands.Add("tp_1", "teleport the player", tpPlayer);
             helper.ConsoleCommands.Add("fish_1", "start fishing", fish);
@@ -233,12 +229,10 @@ namespace observeSpaceTest
                         LogToFile($"return length：{returnedBytes.Length} bytes");
                         //byte[] sentSignal = Encoding.ASCII.GetBytes("sent");
                         //byte[] eofBytes = Encoding.ASCII.GetBytes("<EOF>");
-                        Console.WriteLine("time_point_13: " + DateTime.Now.ToString("HH:mm:ss.fff"));
                         await WriteToMemoryMappedFile(returnedBytes);
                         //await stream.WriteAsync(sentSignal, 0, sentSignal.Length);
                         //await stream.WriteAsync(eofBytes, 0, eofBytes.Length);
                         LogToFile($"written length：{returnedBytes.Length} bytes");
-                        Console.WriteLine("time_point_14: " + DateTime.Now.ToString("HH:mm:ss.fff"));
                     }
                     else
                     {
@@ -325,6 +319,17 @@ namespace observeSpaceTest
             var parts = message.Split('%');
             // TODO CheckValid
             string methodName = parts[0]; 
+
+            // Each run begins by loading its save via load_game_record, so use that as the
+            // per-run boundary: rotate to a fresh MyModLog_<timestamp>.txt here. logFilePath
+            // (instance LogToFile) and LogFileName (static LogToFile helpers) then both point
+            // at the new file for the rest of this run.
+            if (methodName == "load_game_record")
+            {
+                LogFileName = $"MyModLog_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+                logFilePath = Path.Combine(Helper.DirectoryPath, LogFileName);
+            }
+
             string[]? args = null;
             if (parts.Length > 1)
             {
@@ -718,13 +723,6 @@ namespace observeSpaceTest
             Actions.recordDayStart();
         }
 
-        private void OnSaveLoaded(object? sender, SaveLoadedEventArgs e)
-        {
-            // The save just clobbered Game1.options; force the live value back to false so the
-            // game does not pause/freeze while running unfocused under the agent.
-            Game1.options.pauseWhenOutOfFocus = false;
-        }
-
         private void StartAutoPathing(Vector2 targetTile)
         {
             this.Monitor.Log("Attempting to auto-path player.", LogLevel.Info);
@@ -752,7 +750,7 @@ namespace observeSpaceTest
 
         private void OnUpdateTicked(object? sender, UpdateTickedEventArgs e)
         {
-            Actions.updatePixelData(this);
+            // Actions.updatePixelData(this);
             if (Game1.activeClickableMenu is ShippingMenu shippingMenu)
             {
                 this.Monitor.Log("Shipping menu is on");

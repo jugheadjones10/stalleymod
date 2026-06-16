@@ -98,11 +98,24 @@ namespace ActionSpace.actions
         static int sampleRate = 100; //percentage
         static int dayStartTimes = 0;
 
+        // PERF EXPERIMENT TOGGLE: when true, the light observe (observe_v2_light) skips the heavy
+        // scans (NPCs, farm, crops, furniture, exits, buildings) and returns player + game-state +
+        // metadata + surroundings only. The keys the Python obs preprocessor reads are still present
+        // (empty lists where omitted) so a run does not crash. Flip to false (rebuild + relaunch) to
+        // restore normal behavior.
+        public static bool MinimalLightObserve = true;
+
+        // PERF: the per-tile Back-layer property string is a function of (tilesheet, tileIndex) only
+        // (immutable map metadata), but xTile's TileIndexPropertyCollection.Count/GetEnumerator each
+        // re-scan the whole tilesheet's property table (String.Split per key) to rebuild it. Memoize
+        // the formatted string so each distinct (sheetId, tileIndex) pays that scan once.
+        private static readonly Dictionary<(string, int), string> _tilePropCache = new();
+
         private static void LogToFile(string message, Mod mod)
         {
             try
             {
-                string logFilePath = Path.Combine(mod.Helper.DirectoryPath, "MyModLog.txt");
+                string logFilePath = Path.Combine(mod.Helper.DirectoryPath, observeSpaceTest.ModEntry.LogFileName);
                 string logMessage = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {message}";
                 File.AppendAllText(logFilePath, logMessage + Environment.NewLine);
             }
@@ -696,7 +709,78 @@ namespace ActionSpace.actions
             else
             {
                 Game1.pressUseToolButton();
+                // CancelToolAnimationAfterHit(mod);
             }
+        }
+
+        // Hard cap on how long we wait for the hit before truncating anyway (~500ms at
+        // 60fps). The tool's effect (DoFunction) lands mid-swing at most ~230ms in
+        // (slowest is the down swing's longer wind-up), so this cap is only a safety net
+        // for the rare tool that costs no stamina; the stamina-drop signal below is what
+        // normally fires.
+        private const int AnimCancelMaxTicks = 30;
+
+        // How many ticks to keep polling for the swing to begin before giving up. The
+        // swing is started via a net event, so UsingTool may not flip on the same tick.
+        private const int AnimCancelStartTimeoutTicks = 15;
+
+        // Replicates Stardew's built-in animation-cancel (the RightShift+R+Delete handler
+        // in Game1.UpdateControlInput) the way the animation-cancel mods do: start a real
+        // tool swing, wait until the hit has actually registered, then truncate the
+        // remaining recovery frames so the player can act again immediately.
+        //
+        // The hit is applied inside Farmer.useTool -> Tool.DoFunction partway through the
+        // swing, which drains stamina at the same moment it deals damage. Watching for
+        // that stamina drop is a tool- and direction-agnostic signal that the effect
+        // landed: cancelling earlier (as a fixed tick delay did) aborts the swing before
+        // DoFunction runs, so the tree/stone never takes damage ("cancelled too soon").
+        private static void CancelToolAnimationAfterHit(Mod mod)
+        {
+            bool swingStarted = false;
+            int startTimeout = 0;
+            int ticksSinceStart = 0;
+            // Baseline captured before the hit frame: pressUseToolButton has only kicked
+            // off BeginUsingTool at this point, DoFunction fires several frames later.
+            float staminaAtStart = Game1.player.Stamina;
+
+            void OnTick(object? sender, UpdateTickedEventArgs e)
+            {
+                if (!swingStarted)
+                {
+                    if (Game1.player.UsingTool)
+                    {
+                        swingStarted = true;
+                    }
+                    else if (++startTimeout >= AnimCancelStartTimeoutTicks)
+                    {
+                        mod.Helper.Events.GameLoop.UpdateTicked -= OnTick;
+                    }
+                    return;
+                }
+
+                // Swing already finished on its own before we reached the cancel point.
+                if (!Game1.player.UsingTool)
+                {
+                    mod.Helper.Events.GameLoop.UpdateTicked -= OnTick;
+                    return;
+                }
+
+                ticksSinceStart++;
+
+                // Stamina dropped => DoFunction ran and the hit landed; safe to cut the
+                // recovery tail now. The max-tick cap is only a fallback.
+                bool hitLanded = Game1.player.Stamina < staminaAtStart;
+                if (hitLanded || ticksSinceStart >= AnimCancelMaxTicks)
+                {
+                    Game1.freezeControls = false;
+                    Game1.player.forceCanMove();
+                    Game1.player.completelyStopAnimatingOrDoingAction();
+                    Game1.player.UsingTool = false;
+                    mod.Helper.Events.GameLoop.UpdateTicked -= OnTick;
+                }
+            }
+
+            mod.Helper.Events.GameLoop.UpdateTicked += OnTick;
         }
 
         public static void useActiveObject(Mod mod)
@@ -2050,6 +2134,11 @@ namespace ActionSpace.actions
         public class GameMetaData
         {
             public int[] ViewportSize { get; set; }
+            // Name of the player's current location and its map dimensions in TILES
+            // ([width, height]). Valid tile coords are 0..width-1, 0..height-1. Lets the
+            // planner ground waypoint grids in the real map size instead of guessing.
+            public string LocationName { get; set; }
+            public int[] MapSize { get; set; }
         }
 
 
@@ -2315,7 +2404,6 @@ namespace ActionSpace.actions
                 });
             }
 
-            Console.WriteLine("time_point_11: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             var res = new GameData()
             {
                 Player = playerData,
@@ -2771,7 +2859,60 @@ namespace ActionSpace.actions
             public bool? placeable { get; set; }
         }
 
-        public static TileInfo GetTileInfo(string x, string y)
+        // Sub-tile phase timers, accumulated across all GetTileInfo calls in one GetSurroundings,
+        // to find the per-tile floor. Stored as Stopwatch ticks; converted to ms when logged.
+        private sealed class TileTimings
+        {
+            public long LayerTicks;     // Map.GetLayer("Back").Tiles[x,y] fetch
+            public long PropGetTicks;   // TileSheet.TileIndexProperties[tileIndex] access
+            public long PropIterTicks;  // iterate properties + build string
+            public long GatherTicks;    // objects/terrain/building/debris/crop/furniture/warp/npc
+            public long PlaceableTicks; // Game1.currentLocation.isTilePlaceable
+            // Drill-down into PropIter: is it the ToString conversion, the concat, or sheer count?
+            public long ToStringTicks;  // value_p?.ToString() == "T" check
+            public long ConcatTicks;    // tile_properties_info += key + value + "; "
+            public int PropCount;       // total properties iterated this observe
+            public int TilesWithProps;  // tiles that had >0 properties
+            public readonly HashSet<string> SampleProps = new(); // distinct key=value samples (capped)
+        }
+
+        // Build the Back-layer tile-properties string for a tile. This is the expensive bit (xTile's
+        // TileIndexPropertyCollection.Count + GetEnumerator each re-scan the whole sheet's property
+        // table), so callers memoize the result by (sheetId, tileIndex).
+        private static string BuildTilePropertiesString(xTile.Tiles.Tile back_layer_tile, TileTimings t)
+        {
+            string result = "";
+            long _ts = System.Diagnostics.Stopwatch.GetTimestamp();
+            var properties = back_layer_tile.TileSheet.TileIndexProperties[back_layer_tile.TileIndex];
+            t.PropGetTicks += System.Diagnostics.Stopwatch.GetTimestamp() - _ts;
+            if (properties?.Count > 0)
+            {
+                t.TilesWithProps++;
+                foreach (var kv in properties)
+                {
+                    t.PropCount++;
+                    long _tsp = System.Diagnostics.Stopwatch.GetTimestamp();
+                    var value_p = kv.Value;
+                    if (value_p?.ToString() == "T")
+                    {
+                        value_p = "True";
+                    }
+                    t.ToStringTicks += System.Diagnostics.Stopwatch.GetTimestamp() - _tsp;
+
+                    _tsp = System.Diagnostics.Stopwatch.GetTimestamp();
+                    result = result + kv.Key + ": " + value_p + "; ";
+                    t.ConcatTicks += System.Diagnostics.Stopwatch.GetTimestamp() - _tsp;
+
+                    if (t.SampleProps.Count < 40)
+                    {
+                        t.SampleProps.Add(kv.Key + "=" + value_p);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private static TileInfo GetTileInfo(string x, string y, TileTimings t)
         {
             int xI = int.Parse(x);
             int yI = int.Parse(y);
@@ -2786,24 +2927,22 @@ namespace ActionSpace.actions
             string? npc_info = "";
             string? tile_properties_info = "";
 
+            long _ts = System.Diagnostics.Stopwatch.GetTimestamp();
             var back_layer_tile = Game1.currentLocation.Map?.GetLayer("Back")?.Tiles[xI, yI];
+            t.LayerTicks += System.Diagnostics.Stopwatch.GetTimestamp() - _ts;
             if (back_layer_tile != null)
             {
-                var tileIndex = back_layer_tile.TileIndex;
-                var properties = back_layer_tile.TileSheet.TileIndexProperties[tileIndex];
-                if (properties?.Count > 0)
+                _ts = System.Diagnostics.Stopwatch.GetTimestamp();
+                var ck = (back_layer_tile.TileSheet.Id, back_layer_tile.TileIndex);
+                if (!_tilePropCache.TryGetValue(ck, out var cached))
                 {
-                    foreach(var kv in properties)
-                    {
-                        var value_p = kv.Value;
-                        if (value_p?.ToString() == "T")
-                        {
-                            value_p = "True";
-                        }
-                        tile_properties_info = tile_properties_info + kv.Key +": " + value_p + "; ";
-                    }
+                    cached = BuildTilePropertiesString(back_layer_tile, t);
+                    _tilePropCache[ck] = cached;
                 }
+                tile_properties_info = cached;
+                t.PropIterTicks += System.Diagnostics.Stopwatch.GetTimestamp() - _ts;
             }
+            _ts = System.Diagnostics.Stopwatch.GetTimestamp();
             if (Game1.currentLocation.objects.ContainsKey(key))
             {
                 object_info = Game1.currentLocation.objects[key].BaseName;
@@ -2818,9 +2957,7 @@ namespace ActionSpace.actions
                 {
                     var box = building.GetBoundingBox();
                     var tileSize = Game1.tileSize;
-                    var xP = xI * tileSize;
-                    var yP = yI * tileSize;
-                    if (box.Contains(new Point(xP, yP)))
+                    if (box.Contains(new Point(xI * tileSize, yI * tileSize)))
                     {
                         builing_info = building.buildingType.Value;
                     }
@@ -2832,14 +2969,9 @@ namespace ActionSpace.actions
                 {
                     int chunkTileX = (int)(chunk.position.X / Game1.tileSize);
                     int chunkTileY = (int)(chunk.position.Y / Game1.tileSize);
-                  
                     if (chunkTileX == xI && chunkTileY == yI)
                     {
-                        debris_info = debris?.item?.BaseName;
-                        if (debris_info is null)
-                        {
-                            debris_info = debris?.itemId?.Value;
-                        }
+                        debris_info = debris?.item?.BaseName ?? debris?.itemId?.Value;
                     }
                 }
             }
@@ -2865,8 +2997,7 @@ namespace ActionSpace.actions
 
             if (Game1.currentLocation.furniture is not null)
             {
-                var furnitureList = Game1.currentLocation.furniture.ToList();
-                foreach (var furnitureItem in furnitureList)
+                foreach (var furnitureItem in Game1.currentLocation.furniture.ToList())
                 {
                     if (furnitureItem.GetBoundingBox().Contains(new Point(position[0] * Game1.tileSize, position[1] * Game1.tileSize)))
                     {
@@ -2875,21 +3006,28 @@ namespace ActionSpace.actions
                 }
             }
 
-            foreach(Warp warp in Game1.currentLocation.warps.ToList())
+            foreach (Warp warp in Game1.currentLocation.warps.ToList())
             {
-                if (warp.X == xI && warp.Y == yI){
+                if (warp.X == xI && warp.Y == yI)
+                {
                     exit_info = warp.TargetName;
                 }
             }
 
-            // npc info
-            foreach(var npc in Game1.player.currentLocation.characters.ToList()){
-                if (npc.TilePoint.X == xI && npc.TilePoint.Y == yI){
+            foreach (var npc in Game1.player.currentLocation.characters.ToList())
+            {
+                if (npc.TilePoint.X == xI && npc.TilePoint.Y == yI)
+                {
                     Game1.player.friendshipData.TryGetValue(npc.Name, out var friendshipData);
                     npc_info = "Name: " + npc.Name + " Friendship: " + Game1.player.getFriendshipLevelForNPC(npc.Name) + " isTalked: " + Game1.player.hasPlayerTalkedToNPC(npc.Name) + " GiftsToday: " + friendshipData?.GiftsToday ?? "None";
                     break;
                 }
             }
+
+            t.GatherTicks += System.Diagnostics.Stopwatch.GetTimestamp() - _ts;
+            _ts = System.Diagnostics.Stopwatch.GetTimestamp();
+            bool placeable = Game1.currentLocation.isTilePlaceable(key);
+            t.PlaceableTicks += System.Diagnostics.Stopwatch.GetTimestamp() - _ts;
 
             var tile_info = new TileInfo
             {
@@ -2903,14 +3041,20 @@ namespace ActionSpace.actions
                 furniture_at_tile = furniture_info,
                 exit_info = exit_info,
                 npc_info = npc_info,
-                placeable = Game1.currentLocation.isTilePlaceable(key)
+                placeable = placeable
             };
             
             return tile_info;
         }
 
-        public static List<TileInfo> GetSurroundings(int size)
+        public static List<TileInfo> GetSurroundings(int size, Mod mod)
         {
+            // Perf instrumentation: GetSurroundings is the dominant exec_ms cost of observe. Split
+            // into `build` (the per-observe precompute of by-tile lookup tables; ~0 today, will grow
+            // once GetTileInfo's per-tile scans are inverted into dictionaries) and `scan` (the tile
+            // loop that calls GetTileInfo). One PERF_SURROUND line per call; tiles = tiles scanned.
+            var totalSw = System.Diagnostics.Stopwatch.StartNew();
+
             var layer = Game1.player.currentLocation.Map.GetLayer("Back");
 
             int mapWidth = layer.LayerWidth;
@@ -2937,6 +3081,9 @@ namespace ActionSpace.actions
 
             var tileInfoList = new List<TileInfo>();
 
+            var scanSw = System.Diagnostics.Stopwatch.StartNew();
+            var tileTimings = new TileTimings();
+
             // for counters info
             // List<CounterInfo> counters = new List<CounterInfo>();
             // var counter_names = new Dictionary<string, Vector2>
@@ -2953,7 +3100,7 @@ namespace ActionSpace.actions
             {
                 for (int tileY = minY; tileY <= maxY; tileY++)
                 {
-                    TileInfo tileInfo = GetTileInfo(tileX.ToString(), tileY.ToString());
+                    TileInfo tileInfo = GetTileInfo(tileX.ToString(), tileY.ToString(), tileTimings);
 
                     // add counter info
                     if (Game1.currentLocation.Name == "SeedShop"){
@@ -2989,14 +3136,51 @@ namespace ActionSpace.actions
                     tileInfoList.Add(tileInfo);
                 }
             }
+
+            // Interior exit warps frequently sit on the bottom-boundary row (y == mapHeight),
+            // which the clamped scan above never visits. Ensure every warp tile is represented
+            // so the agent can see the exit in `surroundings`, not just in the global exits list.
+            var scanned = new HashSet<(int, int)>(
+                tileInfoList.Select(t => (t.position[0], t.position[1])));
+            foreach (Warp warp in Game1.currentLocation.warps.ToList())
+            {
+                if (scanned.Contains((warp.X, warp.Y)))
+                    continue;
+                tileInfoList.Add(GetTileInfo(warp.X.ToString(), warp.Y.ToString(), tileTimings));
+            }
+            scanSw.Stop();
+            totalSw.Stop();
+
+            double toMs = 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+            LogToFile(
+                $"PERF_SURROUND,{DateTime.Now:HH:mm:ss.fff},tiles={tileInfoList.Count}," +
+                $"scan_ms={scanSw.Elapsed.TotalMilliseconds:F2}," +
+                $"total_ms={totalSw.Elapsed.TotalMilliseconds:F2}," +
+                $"layer_ms={tileTimings.LayerTicks * toMs:F2}," +
+                $"propget_ms={tileTimings.PropGetTicks * toMs:F2}," +
+                $"propiter_ms={tileTimings.PropIterTicks * toMs:F2}," +
+                $"tostring_ms={tileTimings.ToStringTicks * toMs:F2}," +
+                $"concat_ms={tileTimings.ConcatTicks * toMs:F2}," +
+                $"propcount={tileTimings.PropCount}," +
+                $"tiles_with_props={tileTimings.TilesWithProps}," +
+                $"gather_ms={tileTimings.GatherTicks * toMs:F2}," +
+                $"placeable_ms={tileTimings.PlaceableTicks * toMs:F2}",
+                mod);
+            LogToFile($"PERF_PROPS,{DateTime.Now:HH:mm:ss.fff},{string.Join(" | ", tileTimings.SampleProps)}", mod);
             return tileInfoList;
         }
 
         private static GameMetaData GetGameMetaData()
         {
+            // The "Back" layer is the canonical map; LayerWidth/Height are the tile dimensions.
+            // Guard with ?. because a few special locations can lack a Back layer.
+            var loc = Game1.currentLocation;
+            var back = loc?.Map?.GetLayer("Back");
             return new GameMetaData
             {
-                ViewportSize = new[] { Game1.viewport.Width, Game1.viewport.Height }
+                ViewportSize = new[] { Game1.viewport.Width, Game1.viewport.Height },
+                LocationName = loc?.Name ?? "",
+                MapSize = back != null ? new[] { back.LayerWidth, back.LayerHeight } : new[] { 0, 0 },
             };
         }
 

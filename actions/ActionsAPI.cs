@@ -23,7 +23,7 @@ namespace ActionSpace.actions
         {
             try
             {
-                string logFilePath = Path.Combine(mod.Helper.DirectoryPath, "MyModLog.txt");
+                string logFilePath = Path.Combine(mod.Helper.DirectoryPath, observeSpaceTest.ModEntry.LogFileName);
                 string logMessage = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {message}";
                 File.AppendAllText(logFilePath, logMessage + Environment.NewLine);
             }
