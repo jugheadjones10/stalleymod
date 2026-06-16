@@ -1952,6 +1952,28 @@ namespace ActionSpace.actions
             LogToFile("Attempting to auto-path player.", mod);
             // Calculate the path
             var player = Game1.player;
+
+            // Reject off-map targets. Exit warps are intentionally registered one tile OUTSIDE
+            // the playable map (e.g. a FarmHouse door at y == mapHeight), and walking to such a
+            // warp tile is how the player leaves - so we allow off-map targets ONLY when they are
+            // a registered warp. Any other out-of-bounds target (a stray waypoint, an off-map tile
+            // surfaced in surroundings) would let PathFindController shove the player against the
+            // boundary and wedge it in a corner, so we fail fast with a clear reason instead.
+            var backLayer = player.currentLocation.Map?.GetLayer("Back");
+            if (backLayer != null)
+            {
+                int tx = (int)targetTile.X;
+                int ty = (int)targetTile.Y;
+                bool inBounds = tx >= 0 && ty >= 0 && tx < backLayer.LayerWidth && ty < backLayer.LayerHeight;
+                bool isWarp = player.currentLocation.warps.ToList().Any(w => w.X == tx && w.Y == ty);
+                if (!inBounds && !isWarp)
+                {
+                    LogToFile($"Rejecting off-map target {targetTile} (not a warp).", mod);
+                    onComplete(new MoveResult(false, "out_of_bounds"));
+                    return;
+                }
+            }
+
             var pathFinder = new PathFindController(player, player.currentLocation, targetTile.ToPoint(), -1);
 
             void OnWarped(object? sender, WarpedEventArgs e)
