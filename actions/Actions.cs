@@ -98,13 +98,6 @@ namespace ActionSpace.actions
         static int sampleRate = 100; //percentage
         static int dayStartTimes = 0;
 
-        // PERF EXPERIMENT TOGGLE: when true, the light observe (observe_v2_light) skips the heavy
-        // scans (NPCs, farm, crops, furniture, exits, buildings) and returns player + game-state +
-        // metadata + surroundings only. The keys the Python obs preprocessor reads are still present
-        // (empty lists where omitted) so a run does not crash. Flip to false (rebuild + relaunch) to
-        // restore normal behavior.
-        public static bool MinimalLightObserve = true;
-
         // PERF: the per-tile Back-layer property string is a function of (tilesheet, tileIndex) only
         // (immutable map metadata), but xTile's TileIndexPropertyCollection.Count/GetEnumerator each
         // re-scan the whole tilesheet's property table (String.Split per key) to rebuild it. Memoize
@@ -709,78 +702,7 @@ namespace ActionSpace.actions
             else
             {
                 Game1.pressUseToolButton();
-                // CancelToolAnimationAfterHit(mod);
             }
-        }
-
-        // Hard cap on how long we wait for the hit before truncating anyway (~500ms at
-        // 60fps). The tool's effect (DoFunction) lands mid-swing at most ~230ms in
-        // (slowest is the down swing's longer wind-up), so this cap is only a safety net
-        // for the rare tool that costs no stamina; the stamina-drop signal below is what
-        // normally fires.
-        private const int AnimCancelMaxTicks = 30;
-
-        // How many ticks to keep polling for the swing to begin before giving up. The
-        // swing is started via a net event, so UsingTool may not flip on the same tick.
-        private const int AnimCancelStartTimeoutTicks = 15;
-
-        // Replicates Stardew's built-in animation-cancel (the RightShift+R+Delete handler
-        // in Game1.UpdateControlInput) the way the animation-cancel mods do: start a real
-        // tool swing, wait until the hit has actually registered, then truncate the
-        // remaining recovery frames so the player can act again immediately.
-        //
-        // The hit is applied inside Farmer.useTool -> Tool.DoFunction partway through the
-        // swing, which drains stamina at the same moment it deals damage. Watching for
-        // that stamina drop is a tool- and direction-agnostic signal that the effect
-        // landed: cancelling earlier (as a fixed tick delay did) aborts the swing before
-        // DoFunction runs, so the tree/stone never takes damage ("cancelled too soon").
-        private static void CancelToolAnimationAfterHit(Mod mod)
-        {
-            bool swingStarted = false;
-            int startTimeout = 0;
-            int ticksSinceStart = 0;
-            // Baseline captured before the hit frame: pressUseToolButton has only kicked
-            // off BeginUsingTool at this point, DoFunction fires several frames later.
-            float staminaAtStart = Game1.player.Stamina;
-
-            void OnTick(object? sender, UpdateTickedEventArgs e)
-            {
-                if (!swingStarted)
-                {
-                    if (Game1.player.UsingTool)
-                    {
-                        swingStarted = true;
-                    }
-                    else if (++startTimeout >= AnimCancelStartTimeoutTicks)
-                    {
-                        mod.Helper.Events.GameLoop.UpdateTicked -= OnTick;
-                    }
-                    return;
-                }
-
-                // Swing already finished on its own before we reached the cancel point.
-                if (!Game1.player.UsingTool)
-                {
-                    mod.Helper.Events.GameLoop.UpdateTicked -= OnTick;
-                    return;
-                }
-
-                ticksSinceStart++;
-
-                // Stamina dropped => DoFunction ran and the hit landed; safe to cut the
-                // recovery tail now. The max-tick cap is only a fallback.
-                bool hitLanded = Game1.player.Stamina < staminaAtStart;
-                if (hitLanded || ticksSinceStart >= AnimCancelMaxTicks)
-                {
-                    Game1.freezeControls = false;
-                    Game1.player.forceCanMove();
-                    Game1.player.completelyStopAnimatingOrDoingAction();
-                    Game1.player.UsingTool = false;
-                    mod.Helper.Events.GameLoop.UpdateTicked -= OnTick;
-                }
-            }
-
-            mod.Helper.Events.GameLoop.UpdateTicked += OnTick;
         }
 
         public static void useActiveObject(Mod mod)
@@ -2263,35 +2185,6 @@ namespace ActionSpace.actions
 
         private static GameData GatherGameData(int size, Mod mod, bool includeScreenshot = true)
         {
-            // PERF EXPERIMENT: minimal light payload. Only on the light path (no screenshot), build
-            // player + game-state + metadata + surroundings; skip NPCs, farm, crops, furniture,
-            // exits, buildings, shop counters.
-            if (MinimalLightObserve && !includeScreenshot)
-            {
-                return new GameData()
-                {
-                    Player = GetPlayerData(),
-                    GameState = GetGameStateData(),
-                    MetaData = GetGameMetaData(),
-                    SurroundingsData = GetSurroundings(size, mod),
-                    NPCs = new List<NPCData>(),
-                    Farm = new FarmData
-                    {
-                        Animals = new List<FarmAnimalDataInfo>(),
-                        Buildings = new List<FarmBuildingInfo>(),
-                        Pets = new List<PetData>(),
-                    },
-                    CurrentMenuData = new CurrentMenuData { type = "No Menu" },
-                    ScreenShot = null,
-                    Buildings = new List<BuildingInfo>(),
-                    Crops = new List<CropInfo>(),
-                    Furnitures = new List<FurnitureInfo>(),
-                    Exits = new List<ExitInfo>(),
-                    ShopCounters = new List<CounterInfo>(),
-                    CallBackData = new CallBackData { OnDayStarted = dayStartTimes },
-                };
-            }
-
             var playerData = GetPlayerData();
             var npcData = GetNPCData();
             var gameStateData = GetGameStateData();
