@@ -3255,9 +3255,8 @@ namespace ActionSpace.actions
             else if (menu is LevelUpMenu levelUpMenu)
             {
                 // Surface the level-up menu like a dialogue: on a profession level (skill 5 &
-                // 10) expose the two choices in `responses` so the agent can read them and pick
-                // one via confirm_level_up(profession_choice=...), just like answering a Yes/No
-                // dialogue with choose_option. A regular level-up has no choices (just "OK").
+                // 10) expose the two choices in `responses` so the agent can read them. A
+                // regular level-up has no choices (just "OK").
                 var levelUpData = new CurrentMenuData { type = "LevelUpMenu" };
                 if (levelUpMenu.isProfessionChooser)
                 {
@@ -3269,8 +3268,7 @@ namespace ActionSpace.actions
                         var choices = new List<ResponseInfo>();
                         for (int i = 0; i < professions.Count; i++)
                         {
-                            // responseKey is the 1-based index passed back to
-                            // confirm_level_up(profession_choice=...); responseText is the
+                            // responseKey is the 1-based choice index; responseText is the
                             // profession title plus its effect description.
                             choices.Add(new ResponseInfo
                             {

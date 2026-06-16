@@ -257,11 +257,8 @@ namespace observeSpaceTest
         // silent timeout.
         private async Task<string?> waitForReady(string methodName)
         {
-            if (methodName == "resume" || methodName == "pause" || methodName == "observe" || methodName == "get_surroundings" || methodName == "load_game_record" || methodName == "observe_v2" || methodName == "observe_v2_light" || methodName == "confirm_level_up")
+            if (methodName == "resume" || methodName == "pause" || methodName == "observe" || methodName == "get_surroundings" || methodName == "load_game_record" || methodName == "observe_v2" || methodName == "observe_v2_light")
             {
-                // confirm_level_up only operates on the LevelUpMenu, which is exactly the
-                // state the generic check below bails on with "busy:menu:LevelUpMenu". It
-                // must be allowed through so the agent can press OK on that menu.
                 return null;
             }
 
