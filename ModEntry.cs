@@ -249,14 +249,26 @@ namespace observeSpaceTest
             }
         }
 
-        private async Task waitForReady(string methodName)
+        // Returns null once the game is interactable. Returns "busy:<reason>" if a
+        // blocking event is in progress and either (a) it is a known long event we should
+        // not wait out (pass-out, end-of-day save, level-up), or (b) the bounded wait
+        // budget is exhausted. Keeping the cap below the Python socket timeout (5s for
+        // non-move commands) means the caller gets an informative reply instead of a
+        // silent timeout.
+        private async Task<string?> waitForReady(string methodName)
         {
-            if (methodName == "resume" || methodName == "pause" || methodName == "observe" || methodName == "get_surroundings" || methodName == "load_game_record" || methodName == "observe_v2")
+            if (methodName == "resume" || methodName == "pause" || methodName == "observe" || methodName == "get_surroundings" || methodName == "load_game_record" || methodName == "observe_v2" || methodName == "observe_v2_light" || methodName == "confirm_level_up")
             {
-                return;
+                // confirm_level_up only operates on the LevelUpMenu, which is exactly the
+                // state the generic check below bails on with "busy:menu:LevelUpMenu". It
+                // must be allowed through so the agent can press OK on that menu.
+                return null;
             }
 
             Monitor.Log($"now wait for ready!", LogLevel.Debug);
+            int waited = 0;
+            const int maxWaitTicks = 40;   // 40 * 100ms ≈ 4s, under the 5s socket timeout
+
             while (true)
             {
                 var usingTool = Game1.player.UsingTool;
@@ -267,31 +279,51 @@ namespace observeSpaceTest
                 var passingOut = Game1.player.FarmerSprite.isPassingOut();
                 var activeClickableMenu = Game1.activeClickableMenu;
                 var fading = Game1.fadeToBlack;
+
+                // Known long / unrecoverable-by-waiting events: bail immediately so the
+                // agent is told what is happening rather than blocking the full budget.
+                if (passingOut)
+                {
+                    Monitor.Log($"{methodName} not ready: passing out", LogLevel.Debug);
+                    return "busy:passing_out";
+                }
                 if (activeClickableMenu is StardewValley.Menus.SaveGameMenu)
                 {
-                    Monitor.Log($"waiting reason: activeClickableMenu {activeClickableMenu}", LogLevel.Debug);
-                    await Task.Delay(100);
-                    continue;
+                    Monitor.Log($"{methodName} not ready: SaveGameMenu", LogLevel.Debug);
+                    return "busy:menu:SaveGameMenu";
                 }
-
-
-//                var canExit = !usingTool && !isEating && !paused && !usingWeapon && !toolAnimation && !passingOut;
-//                var canExit = !usingTool && !isEating && !paused && !animating && !usingWeapon && !toolAnimation && !passingOut;
+                if (activeClickableMenu is StardewValley.Menus.LevelUpMenu)
+                {
+                    Monitor.Log($"{methodName} not ready: LevelUpMenu", LogLevel.Debug);
+                    return "busy:menu:LevelUpMenu";
+                }
 
                 var canExit = !usingTool && !paused && !usingWeapon && !toolAnimation && !passingOut && !fading;
-//                var canExit = !paused && !animating && !passingOut;
                 if (canExit)
                 {
-                    break;
+                    return null;
                 }
-                else
-                {
-                    Monitor.Log($"{methodName} waiting resaon: usingTool '{usingTool}'; isEating {isEating}; paused {paused}; usingWeapon {usingWeapon}; toolAnimation {toolAnimation}; passingOut {passingOut}; fading {fading}", LogLevel.Debug);
-                    await Task.Delay(100);
-                }
-            }
-            
 
+                if (waited++ >= maxWaitTicks)
+                {
+                    // Transient state (tool/weapon animation, brief fade) that did not
+                    // clear in time. Report it so the call fails fast and the agent can
+                    // re-observe and retry rather than eating a socket timeout.
+                    Monitor.Log($"{methodName} wait budget exhausted: usingTool '{usingTool}'; usingWeapon {usingWeapon}; toolAnimation {toolAnimation}; fading {fading}", LogLevel.Debug);
+                    if (fading)
+                    {
+                        return "busy:fading";
+                    }
+                    if (toolAnimation || usingWeapon || usingTool)
+                    {
+                        return "busy:using_tool";
+                    }
+                    return "busy:unknown";
+                }
+
+                Monitor.Log($"{methodName} waiting resaon: usingTool '{usingTool}'; isEating {isEating}; paused {paused}; usingWeapon {usingWeapon}; toolAnimation {toolAnimation}; passingOut {passingOut}; fading {fading}", LogLevel.Debug);
+                await Task.Delay(100);
+            }
         }
 
         private async Task<object?> HandleMessage(string message)
@@ -342,9 +374,24 @@ namespace observeSpaceTest
             }
             LogToFile($"waiting for ready, method name：{methodName}");
 
-            await waitForReady(methodName);
+            // Phase timing for perf debugging: wait_ms isolates waitForReady's idle polling
+            // (governed by the 100ms Task.Delay) from exec_ms (the skill itself). One PERF line
+            // per command, joined to the Python boundary log by wall-clock timestamp.
+            var perfSw = System.Diagnostics.Stopwatch.StartNew();
+            var busy = await waitForReady(methodName);
+            long waitMs = perfSw.ElapsedMilliseconds;
+            if (busy != null)
+            {
+                LogToFile($"PERF,{DateTime.Now:HH:mm:ss.fff},{methodName},wait_ms={waitMs},exec_ms=0,busy=1");
+                LogToFile($"not ready, returning {busy} for method: {methodName}");
+                return busy;          // dispatcher writes "busy:<reason><EOF>"
+            }
             LogToFile($"method is ready, method name：{methodName}");
 
+            // exec_ms covers the synchronous Invoke AND, for async ActionsAPI methods, the awaited
+            // work below - that is where move/observe actually spend their time.
+            perfSw.Restart();
+            object? result = null;
             if (method != null)
             {
                 try
@@ -354,26 +401,26 @@ namespace observeSpaceTest
                         object[] parameters = new object[args.Length + 1];
                         Array.Copy(args, parameters, args.Length);
                         parameters[args.Length] = this;
-                        LogToFile($"invoking method with args, method name：{methodName}");
-
                         res = method.Invoke(null, parameters);
-                        LogToFile($"invoked method with args, method name：{methodName}");
-
                     }
                     else
                     {
-                        LogToFile($"invoking method without args, method name：{methodName}");
-
                         res = method.Invoke(null, new object[] { this });
-                        LogToFile($"invoked method without args, method name：{methodName}");
+                    }
 
+                    if (res is Task task && res.GetType().IsGenericType)
+                    {
+                        result = await (dynamic)task;
+                    }
+                    else
+                    {
+                        result = res;
                     }
                 }
                 catch (Exception ex)
                 {
                     Monitor.Log($"Error invoking method '{methodName}': {ex.Message}", LogLevel.Error);
                     LogToFile($"Error invoking method '{methodName}': {ex.Message}");
-
                 }
             }
             else
@@ -382,24 +429,9 @@ namespace observeSpaceTest
                 LogToFile($"No such method '{methodName}' found in ActionsAPI or InitTaskAPI");
             }
 
-//            if (methodName == "resume" || methodName == "observe" || methodName == "get_surroundings" || methodName == "pause")
-//            {
-//                return res;
-//            }
+            LogToFile($"PERF,{DateTime.Now:HH:mm:ss.fff},{methodName},wait_ms={waitMs},exec_ms={perfSw.ElapsedMilliseconds}");
+            return result;
 
-//            if (methodName == "observe" )
-//            {
-//                return res;
-//            }
-
-            if (res is Task task && res.GetType().IsGenericType)
-            {
-                Monitor.Log($"{methodName} waiting resaon: await new task {task}", LogLevel.Debug);
-                var asyncValue = await (dynamic)task;
-                return asyncValue;
-            }
-            return res;
-            
         }
 
         private void getMousePos(string command, string[] args)

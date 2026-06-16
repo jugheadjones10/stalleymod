@@ -2158,6 +2158,14 @@ namespace ActionSpace.actions
             public string Season { get; set; }
             public int Year { get; set; }
             public string Weather { get; set; }
+            // Transient "game is busy / non-interactive" flags. True while an event,
+            // cutscene, menu transition, pass-out, or tool animation is in progress.
+            // observe() bypasses waitForReady, so these let the agent see a blocking
+            // state even when action primitives would stall on it.
+            public bool PassingOut { get; set; }
+            public bool FadeToBlack { get; set; }
+            public bool EventUp { get; set; }
+            public bool UsingTool { get; set; }
         }
 
         public class ResponseInfo
@@ -2578,6 +2586,10 @@ namespace ActionSpace.actions
                 Season = Game1.currentSeason,
                 Year = Game1.year,
                 Weather = Game1.isRaining ? "Raining" : Game1.isSnowing ? "Snowing" : "Sunny",
+                PassingOut = Game1.player.FarmerSprite.isPassingOut(),
+                FadeToBlack = Game1.fadeToBlack,
+                EventUp = Game1.eventUp,
+                UsingTool = Game1.player.UsingTool,
             };
         }
 
