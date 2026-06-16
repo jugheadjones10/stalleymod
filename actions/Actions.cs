@@ -2222,14 +2222,13 @@ namespace ActionSpace.actions
             //byte[] serializedData = CBORObject.FromObject(gameData).EncodeToBytes();
             //var options = MessagePackSerializerOptions.Standard.WithResolver(MessagePack.Resolvers.ContractlessStandardResolver.Instance);
             //var serializedData = MessagePackSerializer.Serialize(gameData, options);
-            Console.WriteLine("time_point_12: " + DateTime.Now.ToString("HH:mm:ss.fff"));
 
             return serializedData;
         }
 
-        public static string ExportGameData_v2(int size, Mod mod)
+        public static string ExportGameData_v2(int size, Mod mod, bool includeScreenshot = true)
         {
-            var gameData = GatherGameData(size, mod);
+            var gameData = GatherGameData(size, mod, includeScreenshot);
             var settings = new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
@@ -2239,25 +2238,45 @@ namespace ActionSpace.actions
             return j_info;
         }
 
-        private static GameData GatherGameData(int size, Mod mod)
+        private static GameData GatherGameData(int size, Mod mod, bool includeScreenshot = true)
         {
-            Console.WriteLine("time_point_0: "+ DateTime.Now.ToString("HH:mm:ss.fff"));
+            // PERF EXPERIMENT: minimal light payload. Only on the light path (no screenshot), build
+            // player + game-state + metadata + surroundings; skip NPCs, farm, crops, furniture,
+            // exits, buildings, shop counters.
+            if (MinimalLightObserve && !includeScreenshot)
+            {
+                return new GameData()
+                {
+                    Player = GetPlayerData(),
+                    GameState = GetGameStateData(),
+                    MetaData = GetGameMetaData(),
+                    SurroundingsData = GetSurroundings(size, mod),
+                    NPCs = new List<NPCData>(),
+                    Farm = new FarmData
+                    {
+                        Animals = new List<FarmAnimalDataInfo>(),
+                        Buildings = new List<FarmBuildingInfo>(),
+                        Pets = new List<PetData>(),
+                    },
+                    CurrentMenuData = new CurrentMenuData { type = "No Menu" },
+                    ScreenShot = null,
+                    Buildings = new List<BuildingInfo>(),
+                    Crops = new List<CropInfo>(),
+                    Furnitures = new List<FurnitureInfo>(),
+                    Exits = new List<ExitInfo>(),
+                    ShopCounters = new List<CounterInfo>(),
+                    CallBackData = new CallBackData { OnDayStarted = dayStartTimes },
+                };
+            }
+
             var playerData = GetPlayerData();
-            Console.WriteLine("time_point_1: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             var npcData = GetNPCData();
-            Console.WriteLine("time_point_2: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             var gameStateData = GetGameStateData();
-            Console.WriteLine("time_point_3: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             var farmData = GetFarmData(mod);
-            Console.WriteLine("time_point_4: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             var progressionData = GetProgressionData();
-            Console.WriteLine("time_point_5: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             var currentMenuData = GetCurrentMenuData();
-            Console.WriteLine("time_point_6: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             var gameMetaData = GetGameMetaData();
-            Console.WriteLine("time_point_7: " + DateTime.Now.ToString("HH:mm:ss.fff"));
-            var surroundingsData = GetSurroundings(size);
-            Console.WriteLine("time_point_8: " + DateTime.Now.ToString("HH:mm:ss.fff"));
+            var surroundingsData = GetSurroundings(size, mod);
 
 
             // buildings eliminated
@@ -2421,7 +2440,9 @@ namespace ActionSpace.actions
                 Farm = farmData,
                 // Progression = progressionData,
                 CurrentMenuData = currentMenuData ?? new CurrentMenuData { type = "No Menu" },
-                ScreenShot = pixelData,
+                // pixelData is the continuously-captured back buffer; skip it for the light
+                // fetch so we don't serialize / transfer ~11 MB of base64 per call.
+                ScreenShot = includeScreenshot ? pixelData : null,
                 // Doors = doorCoordinates,
                 Buildings = buildingsData,
                 Crops = cropCoordinates,

@@ -318,6 +318,16 @@ namespace ActionSpace.actions
             return data;
         }
 
+        public static string observe_v2_light(string sizeS, Mod mod)
+        {
+            var size = int.Parse(sizeS);
+            // Same data as observe_v2 but without the screenshot payload, so we avoid
+            // serializing / transferring ~11 MB of base64 per call.
+            var data = Actions.ExportGameData_v2(size, mod, includeScreenshot: false);
+            mod.Monitor.Log("light data received");
+            return data;
+        }
+
         public static byte[]? observe(string sizeS, Mod mod)
         {
             var size = int.Parse(sizeS);
