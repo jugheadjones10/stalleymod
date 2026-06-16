@@ -341,6 +341,70 @@ namespace ActionSpace.actions
             Actions.exit_menu();
         }
 
+        // Press "OK" on the end-of-day LevelUpMenu, choosing a profession on profession
+        // levels (skill 5 & 10). `choiceS` is the 1-based profession index the agent picks
+        // (matching current_menu.responses[].responseKey); 0 means "no explicit choice".
+        // Returns:
+        //   "true"                       -> level confirmed (perk applied; menu closing)
+        //   "false%no_level_up_menu"     -> no LevelUpMenu is currently open
+        //   "false%level_up_not_ready"   -> menu open but still animating in / not populated
+        // Once we flip isActive=false the menu's own update() calls exitThisMenu() and the
+        // end-of-night menu stack advances on its own.
+        public static string confirm_level_up(string choiceS, Mod mod)
+        {
+            int choice = int.TryParse(choiceS, out var c) ? c : 0;
+
+            if (Game1.activeClickableMenu is not LevelUpMenu menu)
+            {
+                return "false%no_level_up_menu";
+            }
+            if (!menu.isActive || !menu.informationUp)
+            {
+                return "false%level_up_not_ready";
+            }
+
+            if (menu.isProfessionChooser)
+            {
+                // Profession levels (5 & 10) force a left/right choice; okButtonClicked()
+                // would silently drop the profession. professionsToChoose is private and is
+                // populated on the menu's first update() tick (gated by hasUpdatedProfessions).
+                if (!menu.hasUpdatedProfessions)
+                {
+                    return "false%level_up_not_ready";
+                }
+
+                var field = typeof(LevelUpMenu).GetField("professionsToChoose",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var professions = field?.GetValue(menu) as System.Collections.Generic.List<int>;
+                if (professions == null || professions.Count == 0)
+                {
+                    return "false%level_up_not_ready";
+                }
+
+                // Map the 1-based agent choice onto professionsToChoose. Fall back to the
+                // first option when no valid choice is given so a run never stalls; the agent
+                // is expected to read current_menu.responses and pass an explicit choice.
+                int index = (choice >= 1 && choice <= professions.Count) ? choice - 1 : 0;
+                int chosen = professions[index];
+                if (!Game1.player.professions.Contains(chosen))
+                {
+                    Game1.player.professions.Add(chosen);
+                }
+                menu.getImmediateProfessionPerk(chosen);
+                menu.isProfessionChooser = false;
+                menu.RemoveLevelFromLevelList();
+                menu.isActive = false;
+                menu.informationUp = false;
+                mod.Monitor.Log($"confirm_level_up: selected profession {chosen} (choice {choice})", LogLevel.Info);
+            }
+            else
+            {
+                menu.okButtonClicked();
+                mod.Monitor.Log("confirm_level_up: pressed OK", LogLevel.Info);
+            }
+            return "true";
+        }
+
         public async static Task<bool> wait_game_start(Mod mod)
         {
             var taskCompletionSource = new TaskCompletionSource<bool>();

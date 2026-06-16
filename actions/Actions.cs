@@ -3359,6 +3359,47 @@ namespace ActionSpace.actions
                     message = message
                 };
             }
+            else if (menu is LevelUpMenu levelUpMenu)
+            {
+                // Surface the level-up menu like a dialogue: on a profession level (skill 5 &
+                // 10) expose the two choices in `responses` so the agent can read them and pick
+                // one via confirm_level_up(profession_choice=...), just like answering a Yes/No
+                // dialogue with choose_option. A regular level-up has no choices (just "OK").
+                var levelUpData = new CurrentMenuData { type = "LevelUpMenu" };
+                if (levelUpMenu.isProfessionChooser)
+                {
+                    var field = typeof(LevelUpMenu).GetField("professionsToChoose",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var professions = field?.GetValue(levelUpMenu) as List<int>;
+                    if (professions != null)
+                    {
+                        var choices = new List<ResponseInfo>();
+                        for (int i = 0; i < professions.Count; i++)
+                        {
+                            // responseKey is the 1-based index passed back to
+                            // confirm_level_up(profession_choice=...); responseText is the
+                            // profession title plus its effect description.
+                            choices.Add(new ResponseInfo
+                            {
+                                responseKey = (i + 1).ToString(),
+                                responseText = string.Join(" - ", LevelUpMenu.getProfessionDescription(professions[i]))
+                            });
+                        }
+                        levelUpData.responses = choices;
+                    }
+                }
+                return levelUpData;
+            }
+            else if (menu != null)
+            {
+                // Fallback: still report the concrete menu type so the agent can see
+                // blocking menus (SaveGameMenu, ShippingMenu, GameMenu, …)
+                // even when we don't extract structured contents for them.
+                return new CurrentMenuData
+                {
+                    type = menu.GetType().Name
+                };
+            }
             else
             {
                 return null;
