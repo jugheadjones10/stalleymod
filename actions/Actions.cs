@@ -78,19 +78,6 @@ namespace ActionSpace.actions
         };
     }
 
-    // Result of an auto-pathing attempt. Reason is "ok" on success, or a short
-    // code on failure (e.g. "unreachable", "npc_blocked", "target_impassable:Stone").
-    public readonly struct MoveResult
-    {
-        public readonly bool Success;
-        public readonly string Reason;
-        public MoveResult(bool success, string reason)
-        {
-            Success = success;
-            Reason = reason;
-        }
-    }
-
     public static class Actions
     {
         static byte[]? pixelData;
@@ -868,7 +855,7 @@ namespace ActionSpace.actions
                 return false;
             }
             var taskCompletionSource = new TaskCompletionSource<bool>();
-            Action<MoveResult> onComplete = (result) => taskCompletionSource.TrySetResult(result.Success);
+            Action<bool> onComplete = (success) => taskCompletionSource.TrySetResult(success);
             StartAutoPathing(new Vector2(currentP.X, currentP.Y), onComplete, mod);
             //Game1.player.setTileLocation(new Vector2(currentP.X, currentP.Y));
             await taskCompletionSource.Task;
@@ -1811,64 +1798,8 @@ namespace ActionSpace.actions
             return null;
         }
 
-        // Strip protocol delimiters ('%', ':') and spaces so a blocker label can never
-        // corrupt the "false%reason[:blocker]" wire format, and stays a single token.
-        private static string SanitizeBlocker(string s)
-        {
-            if (string.IsNullOrEmpty(s))
-                return "unknown";
-            return s.Replace("%", "").Replace(":", "").Replace(" ", "");
-        }
-
-        // Returns a short ASCII label for whatever blocks `tile`, or "unknown".
-        // Only called on the failure path, so cost is irrelevant.
-        public static string DescribeBlocker(Vector2 tile)
-        {
-            var loc = Game1.currentLocation;
-            if (loc == null)
-                return "unknown";
-
-            // 1. Placed/world objects: Stone, Twig, Weeds, fences, machines, etc.
-            if (loc.objects.TryGetValue(tile, out var obj) && obj != null)
-                return SanitizeBlocker(obj.BaseName ?? obj.Name);
-
-            // 2. Resource clumps (2x2): large stumps, hollow logs, boulders, meteorites.
-            //    These are NOT stored in `objects` or `terrainFeatures`.
-            int tileX = (int)tile.X;
-            int tileY = (int)tile.Y;
-            foreach (var clump in loc.resourceClumps)
-            {
-                if (clump.occupiesTile(tileX, tileY))
-                {
-                    int idx = clump.parentSheetIndex.Value;
-                    if (idx == ResourceClump.stumpIndex) return "LargeStump";
-                    if (idx == ResourceClump.hollowLogIndex) return "LargeLog";
-                    if (idx == ResourceClump.boulderIndex) return "Boulder";
-                    if (idx == ResourceClump.meteoriteIndex) return "Meteorite";
-                    return "ResourceClump";
-                }
-            }
-
-            // 3. Terrain features: Tree, FruitTree, Bush, Grass, HoeDirt, Flooring.
-            if (loc.terrainFeatures.TryGetValue(tile, out var feat) && feat != null)
-                return SanitizeBlocker(feat.GetType().Name);
-
-            // 4. Buildings (occupy a bounding box in pixels).
-            if (loc.buildings != null)
-            {
-                foreach (var b in loc.buildings)
-                {
-                    if (b.GetBoundingBox().Contains(new Point(tileX * Game1.tileSize, tileY * Game1.tileSize)))
-                        return SanitizeBlocker(b.buildingType.Value);
-                }
-            }
-
-            // 5. Water / cliff / unknown collision with no specific feature.
-            return "unknown";
-        }
-
         // Auto-pathing method
-        public static void StartAutoPathing(Vector2 targetTile, Action<MoveResult> onComplete, Mod mod)
+        public static void StartAutoPathing(Vector2 targetTile, Action<bool> onComplete, Mod mod)
         {
             mod.Monitor.Log("Attempting to auto-path player.", LogLevel.Info);
             LogToFile("Attempting to auto-path player.", mod);
@@ -1880,7 +1811,7 @@ namespace ActionSpace.actions
             // warp tile is how the player leaves - so we allow off-map targets ONLY when they are
             // a registered warp. Any other out-of-bounds target (a stray waypoint, an off-map tile
             // surfaced in surroundings) would let PathFindController shove the player against the
-            // boundary and wedge it in a corner, so we fail fast with a clear reason instead.
+            // boundary and wedge it in a corner, so we fail fast instead.
             var backLayer = player.currentLocation.Map?.GetLayer("Back");
             if (backLayer != null)
             {
@@ -1891,7 +1822,7 @@ namespace ActionSpace.actions
                 if (!inBounds && !isWarp)
                 {
                     LogToFile($"Rejecting off-map target {targetTile} (not a warp).", mod);
-                    onComplete(new MoveResult(false, "out_of_bounds"));
+                    onComplete(false);
                     return;
                 }
             }
@@ -1900,7 +1831,7 @@ namespace ActionSpace.actions
 
             void OnWarped(object? sender, WarpedEventArgs e)
             {
-                onComplete(new MoveResult(true, "ok"));
+                onComplete(true);
                 mod.Helper.Events.Player.Warped -= OnWarped;
                 mod.Helper.Events.Display.MenuChanged -= OnMenuChanged;
                 mod.Monitor.Log($"Warped while moving to {targetTile}.", LogLevel.Info);
@@ -1911,7 +1842,7 @@ namespace ActionSpace.actions
 
             void OnMenuChanged(object? sender, MenuChangedEventArgs? e)
             {
-                onComplete(new MoveResult(true, "ok"));
+                onComplete(true);
                 mod.Helper.Events.Player.Warped -= OnWarped;
                 mod.Helper.Events.Display.MenuChanged -= OnMenuChanged;
                 mod.Monitor.Log($"Menu changed while moving to {targetTile}.", LogLevel.Info);
@@ -1940,7 +1871,7 @@ namespace ActionSpace.actions
                         }
                         else
                         {
-                            onComplete(new MoveResult(false, "npc_blocked"));
+                            onComplete(false);
                             mod.Helper.Events.Player.Warped -= OnWarped;
                             mod.Helper.Events.Display.MenuChanged -= OnMenuChanged;
                             return;
@@ -1956,7 +1887,7 @@ namespace ActionSpace.actions
                 // Immediately start the clearing task after pathing completes
                 pathFinder.endBehaviorFunction = (farmer, location) =>
                 {
-                    onComplete(new MoveResult(true, "ok"));
+                    onComplete(true);
                     mod.Helper.Events.Player.Warped -= OnWarped;
                     mod.Helper.Events.Display.MenuChanged -= OnMenuChanged;
                     mod.Monitor.Log($"Player has reached target {targetTile}.", LogLevel.Info);
@@ -1966,21 +1897,11 @@ namespace ActionSpace.actions
             }
             else
             {
-                // No path. Distinguish "tile itself is blocked" from "open but unreachable".
-                // isTilePassable only checks map-layer geometry, so a Stone/Tree sitting on
-                // otherwise-walkable dirt would be misreported as "unreachable". IsTileBlockedBy
-                // is "isTilePassable == false || IsTileOccupiedBy", so it also catches objects,
-                // terrain features, resource clumps, and buildings on the tile. Name the blocker
-                // when blocked so the agent can pick the right tool.
-                bool blocked = Game1.currentLocation.IsTileBlockedBy(targetTile);
-                string reason = blocked
-                    ? $"target_impassable:{DescribeBlocker(targetTile)}"
-                    : "unreachable";
-                onComplete(new MoveResult(false, reason));
+                onComplete(false);
                 mod.Helper.Events.Player.Warped -= OnWarped;
                 mod.Helper.Events.Display.MenuChanged -= OnMenuChanged;
-                mod.Monitor.Log($"No valid path to {targetTile} (reason: {reason}).", LogLevel.Warn);
-                LogToFile($"No valid path to {targetTile} (reason: {reason}).", mod);
+                mod.Monitor.Log($"No valid path to {targetTile}.", LogLevel.Warn);
+                LogToFile($"No valid path to {targetTile}.", mod);
 
             }
         }

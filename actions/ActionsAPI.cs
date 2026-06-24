@@ -51,10 +51,10 @@ namespace ActionSpace.actions
                 mod.Helper.Events.Player.Warped -= OnWarped;
             }
             mod.Helper.Events.Player.Warped += OnWarped;
-            Action<MoveResult> onComplete = (result) => {
+            Action<bool> onComplete = (success) => {
                 LogToFile($"moving terminated by complete x:{xI}, y:{yI}", mod);
                 mod.Helper.Events.Player.Warped -= OnWarped;
-                taskCompletionSource.TrySetResult(result.Success);
+                taskCompletionSource.TrySetResult(success);
             };
             Actions.StartAutoPathing(new Vector2(xI, yI), onComplete, mod);
             LogToFile($"awaiting moving x:{xI}, y:{yI}", mod);
@@ -65,96 +65,60 @@ namespace ActionSpace.actions
             return success;
         }
 
-        // Returns "true" on success, or "false%reason[:blocker]" on failure
-        // (e.g. "false%target_impassable:Stone", "false%unreachable", "false%npc_blocked",
-        // "false%menu_open", "false%warped:<NewLocation>").
-        // The Python ActionProxy.move parses this into (success, reason).
-        public static async Task<string> move_relative(string x, string y, Mod mod)
+        // Coordinates are resolved by the public entry points. This method owns the shared
+        // asynchronous pathing lifecycle and warp handling.
+        private static async Task<bool> MoveToTile(int targetX, int targetY, Mod mod)
         {
-            // A move is a no-op while a menu/dialog is up (the game freezes player movement), so
-            // auto-pathing would never complete and this would hang until the socket times out.
-            // Bail immediately with a reason the program can act on instead.
-            if (Game1.activeClickableMenu is not null)
-            {
-                return "false%menu_open";
-            }
+            var taskCompletionSource = new TaskCompletionSource<bool>();
 
-            // Phase timing for perf debugging. move_relative is the dominant exec_ms cost, so split
-            // it into setup (parse), pathfind (StartAutoPathing = A* PathFindController build), traverse
-            // (the awaited tile-by-tile walk), and postcheck (warp-tile check). One PERF_MOVE line per
-            // call; dist is the manhattan distance, which traverse scales with.
-            var moveSw = System.Diagnostics.Stopwatch.StartNew();
-
-            var taskCompletionSource = new TaskCompletionSource<MoveResult>();
-            int xRelative = int.Parse(x);
-            int yRelative = int.Parse(y);
-            int xOrigin = Game1.player.TilePoint.X;
-            int yOrigin = Game1.player.TilePoint.Y;
-            int xI = xOrigin + xRelative;
-            int yI = yOrigin + yRelative;
-
-            LogToFile($"starting moving to x:{xI}, y:{yI} (relative {xRelative}, {yRelative})", mod);
             void OnWarped(object? sender, WarpedEventArgs e)
             {
-                // Pathing crossed a warp tile (e.g. a door): the player teleported to another map
-                // and did NOT reach the requested tile. Report failure so the program re-observes
-                // instead of blindly continuing with relative moves on the wrong map.
-                string newLocation = e.NewLocation?.Name ?? "unknown";
-                LogToFile($"moving terminated by warp to {newLocation} x:{xI}, y:{yI}", mod);
-                taskCompletionSource.TrySetResult(new MoveResult(false, $"warped:{newLocation}"));
+                // Reaching a warp while moving is a successful movement completion.
+                taskCompletionSource.TrySetResult(true);
                 mod.Helper.Events.Player.Warped -= OnWarped;
             }
+
             mod.Helper.Events.Player.Warped += OnWarped;
-            Action<MoveResult> onComplete = (result) => {
-                LogToFile($"moving terminated by complete, status = {result.Success}, x:{xI}, y:{yI}", mod);
+            Action<bool> onComplete = (success) =>
+            {
                 mod.Helper.Events.Player.Warped -= OnWarped;
-                taskCompletionSource.TrySetResult(result);
+                taskCompletionSource.TrySetResult(success);
             };
-            long setupMs = moveSw.ElapsedMilliseconds;
+            Actions.StartAutoPathing(new Vector2(targetX, targetY), onComplete, mod);
 
-            moveSw.Restart();
-            Actions.StartAutoPathing(new Vector2(xI, yI), onComplete, mod);
-            long pathfindMs = moveSw.ElapsedMilliseconds;
-            LogToFile($"awaiting moving x:{xI}, y:{yI}", mod);
-
-            moveSw.Restart();
-            MoveResult result = await taskCompletionSource.Task;
-            long traverseMs = moveSw.ElapsedMilliseconds;
+            bool success = await taskCompletionSource.Task;
             mod.Helper.Events.Player.Warped -= OnWarped;
+            return success;
+        }
 
-            // A path whose ENDPOINT is a warp tile (e.g. a building door) reaches the tile and
-            // reports success a tick BEFORE the warp actually fires, so OnWarped above misses it
-            // and we'd return "true" while the map is about to change under us. Detect that case
-            // explicitly: if we finished standing on a registered warp tile, report it as a warp
-            // so the caller re-observes instead of continuing with stale (now wrong-map) relative
-            // coordinates. Warps crossed mid-path are still handled by OnWarped above.
-            moveSw.Restart();
-            string ret;
-            if (result.Success)
+        // The proxy consumes this private boolean; the LLM-facing move primitive discards it.
+        public static async Task<bool> move_relative(string x, string y, Mod mod)
+        {
+            if (Game1.activeClickableMenu is not null)
             {
-                var p = Game1.player.TilePoint;
-                var warp = Game1.currentLocation.warps.ToList()
-                    .FirstOrDefault(w => w.X == p.X && w.Y == p.Y);
-                if (warp != null)
-                {
-                    LogToFile($"move ended on warp tile x:{xI}, y:{yI} -> warped:{warp.TargetName}", mod);
-                    ret = $"false%warped:{warp.TargetName}";
-                }
-                else
-                {
-                    ret = "true";
-                }
+                return false;
             }
-            else
-            {
-                ret = $"false%{result.Reason}";
-            }
-            long postcheckMs = moveSw.ElapsedMilliseconds;
 
-            int dist = Math.Abs(xRelative) + Math.Abs(yRelative);
-            LogToFile($"PERF_MOVE,{DateTime.Now:HH:mm:ss.fff},dist={dist},setup_ms={setupMs},pathfind_ms={pathfindMs},traverse_ms={traverseMs},postcheck_ms={postcheckMs}", mod);
-            LogToFile($"moving completed, status = {result.Success}, reason = {result.Reason}, x:{xI}, y:{yI}", mod);
-            return ret;
+            int relativeX = int.Parse(x);
+            int relativeY = int.Parse(y);
+            int targetX = Game1.player.TilePoint.X + relativeX;
+            int targetY = Game1.player.TilePoint.Y + relativeY;
+
+            return await MoveToTile(targetX, targetY, mod);
+        }
+
+        // Absolute movement follows the same private-bool/public-void layering as move_relative.
+        public static async Task<bool> move_absolute(string x, string y, Mod mod)
+        {
+            if (Game1.activeClickableMenu is not null)
+            {
+                return false;
+            }
+
+            int targetX = int.Parse(x);
+            int targetY = int.Parse(y);
+
+            return await MoveToTile(targetX, targetY, mod);
         }
 
         public static async Task<bool> move_step(string direction, Mod mod)
