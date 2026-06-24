@@ -354,22 +354,31 @@ namespace ActionSpace.actions
         {
             mod.Monitor.Log($"Try loading game: {record_name}");
             Actions.clearDayStartRecords();
-            try
+            SaveGame.Load(record_name);
+            IClickableMenu activeClickableMenu = Game1.activeClickableMenu;
+            TitleMenu val;
+            if ((val = (TitleMenu)(object)((activeClickableMenu is TitleMenu) ? activeClickableMenu : null)) != null)
             {
-                SaveGame.Load(record_name);
-                IClickableMenu activeClickableMenu = Game1.activeClickableMenu;
-                TitleMenu val;
-                if ((val = (TitleMenu)(object)((activeClickableMenu is TitleMenu) ? activeClickableMenu : null)) != null)
-                {
-                    ((IClickableMenu)val).exitThisMenu(false);
-                }
-            }
-            catch (Exception ex)
-            {
-                mod.Monitor.Log(ex.Message);
+                ((IClickableMenu)val).exitThisMenu(false);
             }
             mod.Monitor.Log($"Successfully loaded game: {record_name}");
             return true;
+        }
+
+        // Returns the actual save-folder name Stardew wrote to. SaveGame.Save() ignores any
+        // requested name and writes to <farmName>_<uniqueIDForThisGame>, so the caller cannot
+        // know the destination ahead of time. Constants.SaveFolderName is that exact folder.
+        public async static Task<string> save_game_record(string record_name, Mod mod)
+        {
+            mod.Monitor.Log($"Try saving current game for checkpoint: {record_name}");
+            IEnumerator<int> save = SaveGame.Save();
+            while (save.MoveNext())
+            {
+                await Task.Yield();
+            }
+            string savedName = StardewModdingAPI.Constants.SaveFolderName;
+            mod.Monitor.Log($"Saved current game to record folder: {savedName}");
+            return savedName;
         }
 
 
@@ -582,4 +591,3 @@ namespace ActionSpace.actions
 
     }
 }
-

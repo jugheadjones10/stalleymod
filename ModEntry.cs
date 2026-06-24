@@ -257,7 +257,7 @@ namespace observeSpaceTest
         // silent timeout.
         private async Task<string?> waitForReady(string methodName)
         {
-            if (methodName == "resume" || methodName == "pause" || methodName == "observe" || methodName == "get_surroundings" || methodName == "load_game_record" || methodName == "observe_v2" || methodName == "observe_v2_light")
+            if (methodName == "resume" || methodName == "pause" || methodName == "observe" || methodName == "get_surroundings" || methodName == "load_game_record" || methodName == "save_game_record" || methodName == "observe_v2" || methodName == "observe_v2_light")
             {
                 return null;
             }
