@@ -1561,6 +1561,295 @@ namespace ActionSpace.actions
             }
         }
 
+        private enum JunimoOptionKind
+        {
+            OpenBundle,
+            DonateIngredient,
+            DonateMoney,
+            Back,
+        }
+
+        private sealed class JunimoOption
+        {
+            public JunimoOptionKind Kind { get; set; }
+            public string Label { get; set; } = "";
+            public Bundle? Bundle { get; set; }
+            public int IngredientIndex { get; set; } = -1;
+            public BundleIngredientDescription Ingredient { get; set; }
+            public int MoneyAmount { get; set; }
+        }
+
+        private static int CompletedIngredientCount(Bundle bundle)
+        {
+            return bundle.ingredients.Count(i => i.completed);
+        }
+
+        private static int RequiredIngredientCount(Bundle bundle)
+        {
+            return Math.Min(bundle.numberOfIngredientSlots, bundle.ingredients.Count);
+        }
+
+        private static bool IsBundleSatisfied(Bundle bundle)
+        {
+            return bundle.complete || CompletedIngredientCount(bundle) >= RequiredIngredientCount(bundle);
+        }
+
+        private static string GetIngredientDisplayName(BundleIngredientDescription ingredient)
+        {
+            if (ingredient.category.HasValue)
+            {
+                return ingredient.category.Value switch
+                {
+                    -2 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.569"),
+                    -75 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.570"),
+                    -4 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.571"),
+                    -5 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.572"),
+                    -6 => Game1.content.LoadString("Strings\\StringsFromCSFiles:CraftingRecipe.cs.573"),
+                    _ => $"category {ingredient.category.Value}",
+                };
+            }
+
+            try
+            {
+                string representativeItemId = JunimoNoteMenu.GetRepresentativeItemId(ingredient);
+                return ItemRegistry.GetDataOrErrorItem(representativeItemId).DisplayName;
+            }
+            catch
+            {
+                return ingredient.id ?? "unknown item";
+            }
+        }
+
+        private static bool InventoryCanSatisfyIngredient(Bundle bundle, BundleIngredientDescription ingredient)
+        {
+            int available = 0;
+            foreach (Item item in Game1.player.Items)
+            {
+                if (bundle.IsValidItemForThisIngredientDescription(item, ingredient))
+                {
+                    available += item.Stack;
+                    if (available >= ingredient.stack)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static bool ConsumeIngredientFromInventory(Bundle bundle, BundleIngredientDescription ingredient)
+        {
+            if (!InventoryCanSatisfyIngredient(bundle, ingredient))
+            {
+                return false;
+            }
+
+            int remaining = ingredient.stack;
+            for (int i = 0; i < Game1.player.Items.Count && remaining > 0; i++)
+            {
+                Item item = Game1.player.Items[i];
+                if (!bundle.IsValidItemForThisIngredientDescription(item, ingredient))
+                {
+                    continue;
+                }
+
+                int consumed = Math.Min(remaining, item.Stack);
+                item.Stack -= consumed;
+                remaining -= consumed;
+                if (item.Stack <= 0)
+                {
+                    Game1.player.Items[i] = null;
+                }
+            }
+
+            return remaining == 0;
+        }
+
+        private static List<JunimoOption> GetJunimoOptions(JunimoNoteMenu menu)
+        {
+            var options = new List<JunimoOption>();
+            if (!Game1.player.hasOrWillReceiveMail("canReadJunimoText"))
+            {
+                return options;
+            }
+
+            if (!menu.specificBundlePage)
+            {
+                foreach (Bundle bundle in menu.bundles)
+                {
+                    if (!IsBundleSatisfied(bundle))
+                    {
+                        options.Add(new JunimoOption
+                        {
+                            Kind = JunimoOptionKind.OpenBundle,
+                            Label = $"Open {bundle.label} Bundle",
+                            Bundle = bundle,
+                        });
+                    }
+                }
+                return options;
+            }
+
+            Bundle currentBundle = menu.currentPageBundle;
+            if (currentBundle == null || IsBundleSatisfied(currentBundle))
+            {
+                options.Add(new JunimoOption { Kind = JunimoOptionKind.Back, Label = "Back" });
+                return options;
+            }
+
+            if (menu.whichArea == CommunityCenter.AREA_Vault)
+            {
+                int amount = currentBundle.ingredients.LastOrDefault().stack;
+                if (amount > 0 && Game1.player.Money >= amount)
+                {
+                    options.Add(new JunimoOption
+                    {
+                        Kind = JunimoOptionKind.DonateMoney,
+                        Label = $"Donate {amount}g",
+                        Bundle = currentBundle,
+                        IngredientIndex = 0,
+                        MoneyAmount = amount,
+                    });
+                }
+                options.Add(new JunimoOption { Kind = JunimoOptionKind.Back, Label = "Back" });
+                return options;
+            }
+
+            for (int i = 0; i < currentBundle.ingredients.Count; i++)
+            {
+                BundleIngredientDescription ingredient = currentBundle.ingredients[i];
+                if (!ingredient.completed && InventoryCanSatisfyIngredient(currentBundle, ingredient))
+                {
+                    options.Add(new JunimoOption
+                    {
+                        Kind = JunimoOptionKind.DonateIngredient,
+                        Label = $"Donate {GetIngredientDisplayName(ingredient)}",
+                        Bundle = currentBundle,
+                        IngredientIndex = i,
+                        Ingredient = ingredient,
+                    });
+                }
+            }
+
+            options.Add(new JunimoOption { Kind = JunimoOptionKind.Back, Label = "Back" });
+            return options;
+        }
+
+        private static bool IsAreaComplete(JunimoNoteMenu menu)
+        {
+            foreach (Bundle bundle in menu.bundles)
+            {
+                if (!IsBundleSatisfied(bundle))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static void CompleteBundleIfReady(JunimoNoteMenu menu, Bundle bundle)
+        {
+            if (!IsBundleSatisfied(bundle))
+            {
+                return;
+            }
+
+            CommunityCenter communityCenter = Game1.RequireLocation<CommunityCenter>("CommunityCenter");
+            communityCenter.bundleRewards[bundle.bundleIndex] = true;
+            bundle.completionAnimation(menu);
+            if (IsAreaComplete(menu))
+            {
+                communityCenter.markAreaAsComplete(menu.whichArea);
+                communityCenter.areaCompleteReward(menu.whichArea);
+            }
+            else
+            {
+                communityCenter.getJunimoForArea(menu.whichArea)?.bringBundleBackToHut(Bundle.getColorFromColorIndex(bundle.bundleColor), communityCenter);
+            }
+        }
+
+        public static string ChooseJunimoNoteOption(int zeroBasedIndex, Mod mod)
+        {
+            if (Game1.activeClickableMenu is not JunimoNoteMenu menu)
+            {
+                return "false%no_junimo_menu";
+            }
+            if (!Game1.player.hasOrWillReceiveMail("canReadJunimoText"))
+            {
+                return "false%junimo_text_locked";
+            }
+
+            List<JunimoOption> options = GetJunimoOptions(menu);
+            if (zeroBasedIndex < 0 || zeroBasedIndex >= options.Count)
+            {
+                return "false%invalid_option";
+            }
+
+            JunimoOption option = options[zeroBasedIndex];
+            switch (option.Kind)
+            {
+                case JunimoOptionKind.OpenBundle:
+                    if (option.Bundle == null)
+                    {
+                        return "false%invalid_option";
+                    }
+                    menu.receiveLeftClick(option.Bundle.bounds.Center.X, option.Bundle.bounds.Center.Y);
+                    return "true";
+
+                case JunimoOptionKind.Back:
+                    if (menu.specificBundlePage)
+                    {
+                        menu.takeDownBundleSpecificPage();
+                    }
+                    else
+                    {
+                        exit_menu();
+                    }
+                    return "true";
+
+                case JunimoOptionKind.DonateIngredient:
+                    if (option.Bundle == null || option.IngredientIndex < 0)
+                    {
+                        return "false%invalid_option";
+                    }
+                    if (!ConsumeIngredientFromInventory(option.Bundle, option.Ingredient))
+                    {
+                        return "false%missing_required_item";
+                    }
+
+                    CommunityCenter communityCenter = Game1.RequireLocation<CommunityCenter>("CommunityCenter");
+                    communityCenter.bundles.FieldDict[option.Bundle.bundleIndex][option.IngredientIndex] = true;
+                    option.Bundle.ingredients[option.IngredientIndex] = new BundleIngredientDescription(option.Ingredient, completed: true);
+                    Game1.playSound("newArtifact");
+                    CompleteBundleIfReady(menu, option.Bundle);
+                    return "true";
+
+                case JunimoOptionKind.DonateMoney:
+                    if (option.Bundle == null || option.MoneyAmount <= 0)
+                    {
+                        return "false%invalid_option";
+                    }
+                    if (Game1.player.Money < option.MoneyAmount)
+                    {
+                        return "false%insufficient_money";
+                    }
+
+                    Game1.player.Money -= option.MoneyAmount;
+                    CommunityCenter vaultCenter = Game1.RequireLocation<CommunityCenter>("CommunityCenter");
+                    vaultCenter.bundles.FieldDict[option.Bundle.bundleIndex][0] = true;
+                    if (option.Bundle.ingredients.Count > 0)
+                    {
+                        option.Bundle.ingredients[0] = new BundleIngredientDescription(option.Bundle.ingredients[0], completed: true);
+                    }
+                    Game1.playSound("select");
+                    CompleteBundleIfReady(menu, option.Bundle);
+                    return "true";
+
+                default:
+                    return "false%invalid_option";
+            }
+        }
+
         public static void exit_menu()
         {
             if (Game1.activeClickableMenu is null)
@@ -2052,6 +2341,32 @@ namespace ActionSpace.actions
             public List<ResponseInfo>? responses { get; set; }
             public string? bluePrints { get; set; }
             public List<ChestItem>? ItemsInChest { get; set; }
+            public int? areaId { get; set; }
+            public string? areaName { get; set; }
+            public bool? specificBundlePage { get; set; }
+            public int? selectedBundleId { get; set; }
+            public List<string>? options { get; set; }
+            public List<JunimoBundleInfo>? bundles { get; set; }
+        }
+
+        public class JunimoBundleInfo
+        {
+            public int id { get; set; }
+            public string? name { get; set; }
+            public bool completed { get; set; }
+            public int completedCount { get; set; }
+            public int requiredCount { get; set; }
+            public List<JunimoIngredientInfo>? ingredients { get; set; }
+        }
+
+        public class JunimoIngredientInfo
+        {
+            public string? itemId { get; set; }
+            public int? category { get; set; }
+            public string? displayName { get; set; }
+            public int quantity { get; set; }
+            public int quality { get; set; }
+            public bool completed { get; set; }
         }
 
         public class ProgressionData
@@ -3201,6 +3516,48 @@ namespace ActionSpace.actions
                     }
                 }
                 return levelUpData;
+            }
+            else if (menu is JunimoNoteMenu junimoNoteMenu)
+            {
+                var options = GetJunimoOptions(junimoNoteMenu).Select(option => option.Label).ToList();
+                var bundleInfos = new List<JunimoBundleInfo>();
+                foreach (Bundle bundle in junimoNoteMenu.bundles)
+                {
+                    var ingredients = new List<JunimoIngredientInfo>();
+                    foreach (BundleIngredientDescription ingredient in bundle.ingredients)
+                    {
+                        ingredients.Add(new JunimoIngredientInfo
+                        {
+                            itemId = ingredient.id,
+                            category = ingredient.category,
+                            displayName = GetIngredientDisplayName(ingredient),
+                            quantity = ingredient.stack,
+                            quality = ingredient.quality,
+                            completed = ingredient.completed,
+                        });
+                    }
+
+                    bundleInfos.Add(new JunimoBundleInfo
+                    {
+                        id = bundle.bundleIndex,
+                        name = bundle.label,
+                        completed = IsBundleSatisfied(bundle),
+                        completedCount = CompletedIngredientCount(bundle),
+                        requiredCount = RequiredIngredientCount(bundle),
+                        ingredients = ingredients,
+                    });
+                }
+
+                return new CurrentMenuData
+                {
+                    type = "JunimoNoteMenu",
+                    areaId = junimoNoteMenu.whichArea,
+                    areaName = CommunityCenter.getAreaNameFromNumber(junimoNoteMenu.whichArea),
+                    specificBundlePage = junimoNoteMenu.specificBundlePage,
+                    selectedBundleId = junimoNoteMenu.currentPageBundle?.bundleIndex,
+                    options = options,
+                    bundles = bundleInfos,
+                };
             }
             else if (menu != null)
             {

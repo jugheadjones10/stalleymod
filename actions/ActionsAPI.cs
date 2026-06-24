@@ -176,7 +176,9 @@ namespace ActionSpace.actions
             if (indexI <= 0)
             {
                 Actions.exit_menu();
+                return;
             }
+
             else
             {
                 indexI = indexI - 1;
@@ -206,6 +208,10 @@ namespace ActionSpace.actions
                 {
                     put_to_chest(index, quality, mod);
                 }
+            }
+            else if (Game1.activeClickableMenu is JunimoNoteMenu)
+            {
+                _ = Actions.ChooseJunimoNoteOption(indexI, mod);
             }
             else
             {
