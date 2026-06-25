@@ -2217,6 +2217,8 @@ namespace ActionSpace.actions
         {
             public string Name { get; set; }
             public int? Quantity { get; set; }
+            public int? WaterLeft { get; set; }
+            public int? WaterCapacity { get; set; }
         }
 
         public class CurrentInventoryData
@@ -2699,9 +2701,14 @@ namespace ActionSpace.actions
                 Location = Game1.player.currentLocation.Name,
                 Position = Game1.player.TilePoint,
                 FacingDirection = Game1.player.facingDirection.Value,
-                Inventory = Game1.player.Items.Select(item => new InventoryItem {
-                    Name = item?.Name,
-                    Quantity = item?.stack.Value
+                Inventory = Game1.player.Items.Select(item => {
+                    var wateringCan = item as WateringCan;
+                    return new InventoryItem {
+                        Name = item?.Name,
+                        Quantity = item?.stack.Value,
+                        WaterLeft = wateringCan?.WaterLeft,
+                        WaterCapacity = wateringCan?.waterCanMax
+                    };
                 }).ToList(),
                 CurrentInventory = new CurrentInventoryData
                 {
