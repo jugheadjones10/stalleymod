@@ -2281,6 +2281,7 @@ namespace ActionSpace.actions
             public CallBackData CallBackData { get; set; }
             public List<TileInfo> SurroundingsData { get; set; }
             public List<FurnitureInfo> Furnitures { get; set; }
+            public List<CommunityCenterScrollInfo>? CommunityCenterScrolls { get; set; }
         }
 
         public class CallBackData
@@ -2369,6 +2370,16 @@ namespace ActionSpace.actions
             public int quantity { get; set; }
             public int quality { get; set; }
             public bool completed { get; set; }
+        }
+
+        public class CommunityCenterScrollInfo
+        {
+            public int areaId { get; set; }
+            public string? areaName { get; set; }
+            public Vector2 noteTile { get; set; }
+            public Vector2 interactionTile { get; set; }
+            public string? directionToFace { get; set; }
+            public bool areaComplete { get; set; }
         }
 
         public class ProgressionData
@@ -2608,7 +2619,8 @@ namespace ActionSpace.actions
                 {
                     OnDayStarted = dayStartTimes
                 },
-                SurroundingsData = surroundingsData
+                SurroundingsData = surroundingsData,
+                CommunityCenterScrolls = GetCommunityCenterScrolls()
             };
             return res;
         }
@@ -2911,6 +2923,43 @@ namespace ActionSpace.actions
         {
             public string id { get; set; }
             public bool completed { get; set; }
+        }
+
+        private static List<CommunityCenterScrollInfo> GetCommunityCenterScrolls()
+        {
+            if (Game1.currentLocation.Name != "CommunityCenter")
+            {
+                return new List<CommunityCenterScrollInfo>();
+            }
+
+            CommunityCenter communityCenter = Game1.RequireLocation<CommunityCenter>("CommunityCenter");
+            var scrolls = new[]
+            {
+                new { AreaId = 0, AreaName = "Pantry", NoteTile = new Vector2(14, 5), LayerName = "Buildings" },
+                new { AreaId = 1, AreaName = "Crafts Room", NoteTile = new Vector2(14, 23), LayerName = "Buildings" },
+                new { AreaId = 2, AreaName = "Fish Tank", NoteTile = new Vector2(40, 10), LayerName = "Buildings" },
+                new { AreaId = 3, AreaName = "Boiler Room", NoteTile = new Vector2(63, 14), LayerName = "Buildings" },
+                new { AreaId = 4, AreaName = "Vault", NoteTile = new Vector2(55, 6), LayerName = "Buildings" },
+                new { AreaId = 5, AreaName = "Bulletin Board", NoteTile = new Vector2(46, 11), LayerName = "Front" },
+            };
+
+            return scrolls.Where(scroll =>
+            {
+                var layer = Game1.currentLocation.Map.GetLayer(scroll.LayerName);
+                return layer.Tiles[(int)scroll.NoteTile.X, (int)scroll.NoteTile.Y] != null;
+            }).Select(scroll =>
+            {
+                bool areaComplete = communityCenter.areasComplete[scroll.AreaId];
+                return new CommunityCenterScrollInfo
+                {
+                    areaId = scroll.AreaId,
+                    areaName = scroll.AreaName,
+                    noteTile = scroll.NoteTile,
+                    interactionTile = scroll.NoteTile + new Vector2(0, 1),
+                    directionToFace = "up",
+                    areaComplete = areaComplete,
+                };
+            }).ToList();
         }
 
         public static ProgressionData GetProgressionData()
