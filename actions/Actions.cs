@@ -91,6 +91,11 @@ namespace ActionSpace.actions
         // the formatted string so each distinct (sheetId, tileIndex) pays that scan once.
         private static readonly Dictionary<(string, int), string> _tilePropCache = new();
 
+        public static string? NormalizeObservationName(string? name)
+        {
+            return name == "Farmhouse" ? "FarmHouse" : name;
+        }
+
         private static void LogToFile(string message, Mod mod)
         {
             try
@@ -2450,26 +2455,27 @@ namespace ActionSpace.actions
             List<BuildingInfo> buildingsData = new List<BuildingInfo>();
             foreach (var building in buildings)
             {
+                var rawBuildingType = building.buildingType.Value;
                 BuildingInfo buildingInfo = new BuildingInfo()
                 {
-                    name = building.buildingType.Value,
+                    name = NormalizeObservationName(rawBuildingType),
                 };
                 if (building.humanDoor.Value != null)
                 {
                     var doorX = building.tileX.Value + building.humanDoor.Value.X;
                     var doorY = building.tileY.Value + building.humanDoor.Value.Y;
-                    if (doorCoordinates.Keys.Contains(building.buildingType.Value))
+                    if (doorCoordinates.Keys.Contains(rawBuildingType))
                     {
                         continue;
                     }
-                    doorCoordinates.Add(building.buildingType.Value, (doorX, doorY));
+                    doorCoordinates.Add(rawBuildingType, (doorX, doorY));
                     buildingInfo.doorPosition = new Vector2(doorX, doorY);
                 }
                 if (buildingInfo.doorPosition is null)
                 {
                     foreach (var doorDict in Game1.currentLocation.doors.FieldDict.ToList())
                     {
-                        if (doorCoordinates.Keys.Contains(doorDict.Value.Value) || doorDict.Value.Value != buildingInfo.name)
+                        if (doorCoordinates.Keys.Contains(doorDict.Value.Value) || doorDict.Value.Value != rawBuildingType)
                         {
                             continue;
                         }
@@ -2486,7 +2492,7 @@ namespace ActionSpace.actions
             {
                 BuildingInfo buildingInfo = new BuildingInfo()
                 {
-                    name = door.Value,
+                    name = NormalizeObservationName(door.Value),
                     doorPosition = new Vector2() {
                         X = door.Key.X,
                         Y = door.Key.Y
@@ -2864,7 +2870,7 @@ namespace ActionSpace.actions
 
                 FarmBuildingInfo buildinginfo = new FarmBuildingInfo()
                 {
-                    type = building.buildingType?.Value,
+                    type = NormalizeObservationName(building.buildingType?.Value),
                     position = new Vector2(building.tileX.Value, building.tileY.Value),
                     isAnimalDoorOpen = building.animalDoorOpen?.Value,
                     isBowlFull = isWatered,
@@ -3201,7 +3207,7 @@ namespace ActionSpace.actions
                     var tileSize = Game1.tileSize;
                     if (box.Contains(new Point(xI * tileSize, yI * tileSize)))
                     {
-                        builing_info = building.buildingType.Value;
+                        builing_info = NormalizeObservationName(building.buildingType.Value);
                     }
                 }
             }

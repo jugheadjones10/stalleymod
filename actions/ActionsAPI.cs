@@ -512,7 +512,7 @@ namespace ActionSpace.actions
                     var yP = yI * tileSize;
                     if (box.Contains(new Point(xP, yP)))
                     {
-                        builing_info = building.buildingType.Value;
+                        builing_info = NormalizeObservationName(building.buildingType.Value);
                     }
                 }
             }
