@@ -1,4 +1,4 @@
-# Staelly Mod
+# Stalley Mod
 
 The Stardew Valley mod used by StarDojo agents. This repository is also the
 home for the fixture recording, replay, observation snapshot, and debugging
