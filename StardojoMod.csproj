@@ -39,14 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Stardew Valley">
-      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\common\Stardew Valley\Contents\MacOS\Stardew Valley.dll</HintPath>
-    </Reference>
-    <Reference Include="StardewModdingAPI">
-      <HintPath>..\..\..\Library\Application Support\Steam\steamapps\common\Stardew Valley\Contents\MacOS\StardewModdingAPI.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="patches\" />
     <None Remove="common\" />
   </ItemGroup>

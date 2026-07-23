@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <!-- Usually auto-detected by Pathoschild.Stardew.ModBuildConfig. -->
+    <!-- <GamePath>/path/to/Stardew Valley/Contents/MacOS</GamePath> -->
+    <StartArguments>--port-id 6000</StartArguments>
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+</Project>
