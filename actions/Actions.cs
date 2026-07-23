@@ -1857,7 +1857,8 @@ namespace ActionSpace.actions
 
         public static void exit_menu()
         {
-            if (Game1.activeClickableMenu is null)
+            // Return for LevelUpMenu because just closing it will cause menu to disappear without applying Level Up changes.
+            if (Game1.activeClickableMenu is null or LevelUpMenu)
             {
                 return;
             }
@@ -3552,30 +3553,66 @@ namespace ActionSpace.actions
             }
             else if (menu is LevelUpMenu levelUpMenu)
             {
-                // Surface the level-up menu like a dialogue: on a profession level (skill 5 &
-                // 10) expose the two choices in `responses` so the agent can read them. A
-                // regular level-up has no choices (just "OK").
                 var levelUpData = new CurrentMenuData { type = "LevelUpMenu" };
+                if (!levelUpMenu.informationUp)
+                {
+                    return levelUpData;
+                }
+
+                const BindingFlags fields = BindingFlags.NonPublic | BindingFlags.Instance;
+                var menuType = typeof(LevelUpMenu);
+                var title = (string)menuType.GetField("title", fields)!.GetValue(levelUpMenu)!;
+                var extraInfoForLevel = (List<string>)menuType
+                    .GetField("extraInfoForLevel", fields)!
+                    .GetValue(levelUpMenu)!;
+                var newCraftingRecipes = (List<CraftingRecipe>)menuType
+                    .GetField("newCraftingRecipes", fields)!
+                    .GetValue(levelUpMenu)!;
+
+                var messageParts = new List<string> { title };
+                messageParts.AddRange(extraInfoForLevel);
+                foreach (var recipe in newCraftingRecipes)
+                {
+                    string recipeType = Game1.content.LoadString(
+                        $"Strings\\UI:LearnedRecipe_{(recipe.isCookingRecipe ? "cooking" : "crafting")}"
+                    );
+                    messageParts.Add(Game1.content.LoadString(
+                        "Strings\\UI:LevelUp_NewRecipe",
+                        recipeType,
+                        recipe.DisplayName
+                    ));
+                }
+                levelUpData.message = string.Join("\n", messageParts);
+
                 if (levelUpMenu.isProfessionChooser)
                 {
-                    var field = typeof(LevelUpMenu).GetField("professionsToChoose",
-                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                    var professions = field?.GetValue(levelUpMenu) as List<int>;
-                    if (professions != null)
+                    var professions = (List<int>)menuType
+                        .GetField("professionsToChoose", fields)!
+                        .GetValue(levelUpMenu)!;
+                    var choices = new List<ResponseInfo>();
+                    for (int i = 0; i < professions.Count; i++)
                     {
-                        var choices = new List<ResponseInfo>();
-                        for (int i = 0; i < professions.Count; i++)
+                        choices.Add(new ResponseInfo
                         {
-                            // responseKey is the 1-based choice index; responseText is the
-                            // profession title plus its effect description.
-                            choices.Add(new ResponseInfo
-                            {
-                                responseKey = (i + 1).ToString(),
-                                responseText = string.Join(" - ", LevelUpMenu.getProfessionDescription(professions[i]))
-                            });
-                        }
-                        levelUpData.responses = choices;
+                            responseKey = (i + 1).ToString(),
+                            responseText = string.Join(
+                                " - ",
+                                LevelUpMenu.getProfessionDescription(professions[i])
+                            )
+                        });
                     }
+                    levelUpData.responses = choices;
+                }
+                else
+                {
+                    levelUpData.responses = new List<ResponseInfo>
+                    {
+                        new ResponseInfo
+                        {
+                            responseKey = "1",
+                            responseText = "OK"
+                        }
+                    };
                 }
                 return levelUpData;
             }

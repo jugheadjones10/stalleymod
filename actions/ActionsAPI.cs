@@ -173,6 +173,33 @@ namespace ActionSpace.actions
             int indexI = int.Parse(index);
             int qualityI = int.Parse(quality);
             int directionI = int.Parse(direction);
+            if (Game1.activeClickableMenu is LevelUpMenu levelUpMenu)
+            {
+                if (indexI <= 0)
+                {
+                    return;
+                }
+
+                if (levelUpMenu.isProfessionChooser)
+                {
+                    var professions = mod.Helper.Reflection
+                        .GetField<List<int>>(levelUpMenu, "professionsToChoose")
+                        .GetValue();
+                    int chosenProfession = professions[indexI - 1];
+                    Game1.player.professions.Add(chosenProfession);
+                    levelUpMenu.getImmediateProfessionPerk(chosenProfession);
+                    levelUpMenu.isProfessionChooser = false;
+                    levelUpMenu.RemoveLevelFromLevelList();
+                    levelUpMenu.isActive = false;
+                    levelUpMenu.informationUp = false;
+                }
+                else if (indexI == 1)
+                {
+                    levelUpMenu.okButtonClicked();
+                }
+                return;
+            }
+
             if (indexI <= 0)
             {
                 Actions.exit_menu();
