@@ -251,7 +251,8 @@ namespace observeSpaceTest
 
         private async Task waitForReady(string methodName)
         {
-            if (methodName == "resume" || methodName == "pause" || methodName == "observe" || methodName == "get_surroundings" || methodName == "load_game_record" || methodName == "observe_v2" || methodName == "observe_v2_light")
+            var isObservation = methodName == "observe" || methodName == "get_surroundings" || methodName == "observe_v2" || methodName == "observe_v2_light";
+            if (methodName == "resume" || methodName == "load_game_record")
             {
                 return;
             }
@@ -274,16 +275,27 @@ namespace observeSpaceTest
                     continue;
                 }
 
-                var canExit = !usingTool && !paused && !usingWeapon && !toolAnimation && !passingOut && !fading;
-                if (canExit)
+                if (fading)
+                {
+                    Monitor.Log($"{methodName} waiting for location transition", LogLevel.Debug);
+                    await Task.Delay(100);
+                    continue;
+                }
+
+                if (isObservation || methodName == "pause")
                 {
                     break;
                 }
-                else
+
+                var farmerBusy = usingTool || isEating || paused || usingWeapon || toolAnimation || passingOut;
+                if (farmerBusy)
                 {
-                    Monitor.Log($"{methodName} waiting resaon: usingTool '{usingTool}'; isEating {isEating}; paused {paused}; usingWeapon {usingWeapon}; toolAnimation {toolAnimation}; passingOut {passingOut}; fading {fading}", LogLevel.Debug);
+                    Monitor.Log($"{methodName} waiting reason: usingTool '{usingTool}'; isEating {isEating}; paused {paused}; usingWeapon {usingWeapon}; toolAnimation {toolAnimation}; passingOut {passingOut}", LogLevel.Debug);
                     await Task.Delay(100);
+                    continue;
                 }
+
+                break;
             }
         }
 
