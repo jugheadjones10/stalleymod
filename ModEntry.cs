@@ -196,55 +196,51 @@ namespace observeSpaceTest
 
         private async Task HandleClientAsync(TcpClient client)
         {
-
             using (client)
             {
-                NetworkStream stream = client.GetStream();
-                byte[] bytes = new byte[256];
-                int i;
-                while ((i = await stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
+                try
                 {
-                    LogToFile("start reading from stream");
-                    string data = Encoding.ASCII.GetString(bytes, 0, i);
-                    Monitor.Log($"Received: {data}", LogLevel.Debug);
-                    LogToFile($"Received: {data}");
+                    NetworkStream stream = client.GetStream();
+                    byte[] bytes = new byte[256];
+                    int i;
+                    while ((i = await stream.ReadAsync(bytes, 0, bytes.Length)) != 0)
+                    {
+                        LogToFile("start reading from stream");
+                        string data = Encoding.ASCII.GetString(bytes, 0, i);
+                        Monitor.Log($"Received: {data}", LogLevel.Debug);
+                        LogToFile($"Received: {data}");
 
-                    var usingTool = Game1.player.UsingTool;
-                    var isEating = Game1.player.isEating;
-                    var paused = Game1.paused;
-                    var animating = Game1.player.FarmerSprite.IsPlayingBasicAnimation(Game1.player.facingDirection.Value, true) ||
-                        Game1.player.FarmerSprite.IsPlayingBasicAnimation(Game1.player.facingDirection.Value, false);
-                    var usingWeapon = Game1.player.FarmerSprite.isUsingWeapon();
-                    var toolAnimation = Game1.player.FarmerSprite.isOnToolAnimation();
-                    var passingOut = Game1.player.FarmerSprite.isPassingOut();
-                    var activeClickableMenu = Game1.activeClickableMenu;
-                    Monitor.Log($"waiting resaon before executing: usingTool '{usingTool}'; isEating {isEating}; paused {paused}; animating {animating}; usingWeapon {usingWeapon}; toolAnimation {toolAnimation}; passingOut {passingOut}; activeClickableMenu {activeClickableMenu} ", LogLevel.Debug);
-                    LogToFile($"waiting resaon before executing: usingTool '{usingTool}'; isEating {isEating}; paused {paused}; animating {animating}; usingWeapon {usingWeapon}; toolAnimation {toolAnimation}; passingOut {passingOut}; activeClickableMenu {activeClickableMenu} ");
-                    object? returnValue = await HandleMessage(data);
-                    if (returnValue is Byte[] returnedBytes)
-                    {
-                        Monitor.Log($"Processed From Main: {data}", LogLevel.Debug);
-                        LogToFile($"Processed From Main: {data}");
-                        Monitor.Log($"return length：{returnedBytes.Length} bytes", LogLevel.Debug);
-                        LogToFile($"return length：{returnedBytes.Length} bytes");
-                        //byte[] sentSignal = Encoding.ASCII.GetBytes("sent");
-                        //byte[] eofBytes = Encoding.ASCII.GetBytes("<EOF>");
-                        await WriteToMemoryMappedFile(returnedBytes);
-                        //await stream.WriteAsync(sentSignal, 0, sentSignal.Length);
-                        //await stream.WriteAsync(eofBytes, 0, eofBytes.Length);
-                        LogToFile($"written length：{returnedBytes.Length} bytes");
+                        object? returnValue = await HandleMessage(data);
+                        if (returnValue is Byte[] returnedBytes)
+                        {
+                            Monitor.Log($"Processed From Main: {data}", LogLevel.Debug);
+                            LogToFile($"Processed From Main: {data}");
+                            Monitor.Log($"return length：{returnedBytes.Length} bytes", LogLevel.Debug);
+                            LogToFile($"return length：{returnedBytes.Length} bytes");
+                            //byte[] sentSignal = Encoding.ASCII.GetBytes("sent");
+                            //byte[] eofBytes = Encoding.ASCII.GetBytes("<EOF>");
+                            await WriteToMemoryMappedFile(returnedBytes);
+                            //await stream.WriteAsync(sentSignal, 0, sentSignal.Length);
+                            //await stream.WriteAsync(eofBytes, 0, eofBytes.Length);
+                            LogToFile($"written length：{returnedBytes.Length} bytes");
+                        }
+                        else
+                        {
+                            Monitor.Log($"Processed From Main: {data}", LogLevel.Debug);
+                            LogToFile($"Processed From Main: {data}");
+                            string? returnValueS = returnValue?.ToString();
+                            byte[] msg = Encoding.ASCII.GetBytes((returnValueS ?? "Message received") + "<EOF>");
+                            Monitor.Log($"return length：{msg.Length} bytes", LogLevel.Debug);
+                            LogToFile($"return length：{msg.Length} bytes");
+                            await stream.WriteAsync(msg, 0, msg.Length);
+                            LogToFile($"written length：{msg.Length} bytes");
+                        }
                     }
-                    else
-                    {
-                        Monitor.Log($"Processed From Main: {data}", LogLevel.Debug);
-                        LogToFile($"Processed From Main: {data}");
-                        string? returnValueS = returnValue?.ToString();
-                        byte[] msg = Encoding.ASCII.GetBytes((returnValueS ?? "Message received") + "<EOF>");
-                        Monitor.Log($"return length：{msg.Length} bytes", LogLevel.Debug);
-                        LogToFile($"return length：{msg.Length} bytes");
-                        await stream.WriteAsync(msg, 0, msg.Length);
-                        LogToFile($"written length：{msg.Length} bytes");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Monitor.Log($"Error handling client: {ex}", LogLevel.Error);
+                    LogToFile($"Error handling client: {ex}");
                 }
             }
         }
