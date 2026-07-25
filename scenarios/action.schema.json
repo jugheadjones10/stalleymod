@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Stalley Mod recorded action",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["action", "arguments"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+    },
+    "arguments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32
+    },
+    "recordedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "durationMs": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "result": true,
+    "resultRaw": {
+      "type": ["string", "null"]
+    },
+    "error": {
+      "type": ["string", "null"]
+    }
+  }
+}

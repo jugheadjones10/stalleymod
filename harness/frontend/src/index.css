@@ -1,0 +1,265 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+
+@theme inline {
+  --font-sans: "Geist Variable", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-code: var(--code);
+}
+
+:root {
+  font-family: "Geist Variable", sans-serif;
+  color-scheme: light;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --border: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-accent: oklch(0.95 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --code: oklch(0.985 0 0);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --border: oklch(1 0 0 / 10%);
+    --ring: oklch(0.556 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-ring: oklch(0.556 0 0);
+    --code: oklch(0.12 0 0);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+
+  body {
+    @apply m-0 bg-background text-foreground antialiased;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button:not(:disabled) {
+    @apply cursor-pointer;
+  }
+
+  button:disabled,
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+}
+
+@layer components {
+  .button {
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-3 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/60 disabled:pointer-events-none;
+  }
+
+  .button svg,
+  .icon-button svg {
+    @apply size-3.5;
+  }
+
+  .button.primary {
+    @apply bg-foreground text-background hover:opacity-85;
+  }
+
+  .button.secondary {
+    @apply border bg-background hover:bg-muted;
+  }
+
+  .button.danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+
+  .button.ghost-danger {
+    @apply text-red-700 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950;
+  }
+
+  .button.recording {
+    @apply border border-red-300 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-900 dark:bg-red-950 dark:text-red-300;
+  }
+
+  .icon-button {
+    @apply inline-grid size-8 shrink-0 place-items-center rounded-md outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/60;
+  }
+
+  .icon-button.bordered {
+    @apply border bg-background;
+  }
+
+  .field {
+    @apply grid gap-1.5 text-xs font-medium;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    @apply w-full rounded-md border bg-background px-3 py-2 text-sm font-normal outline-none focus:ring-2 focus:ring-ring/50;
+  }
+
+  .field textarea {
+    @apply resize-y;
+  }
+
+  .field small {
+    @apply font-normal text-muted-foreground;
+  }
+
+  .compact-field {
+    @apply flex h-8 items-center gap-1.5 rounded-md border bg-background px-2 text-[11px] text-muted-foreground;
+  }
+
+  .compact-field input {
+    @apply w-14 bg-transparent text-xs font-medium text-foreground outline-none;
+  }
+
+  .stat {
+    @apply flex items-center gap-1.5 text-xs;
+  }
+
+  .stat svg {
+    @apply size-3.5 text-muted-foreground;
+  }
+
+  .stat > span {
+    @apply text-muted-foreground;
+  }
+
+  .stat > strong {
+    @apply max-w-40 truncate font-medium tabular-nums;
+  }
+
+  .tab {
+    @apply relative flex h-10 items-center gap-1.5 px-3 text-xs text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring;
+  }
+
+  .tab svg {
+    @apply size-3.5;
+  }
+
+  .tab span {
+    @apply rounded-full bg-muted px-1.5 text-[10px] tabular-nums;
+  }
+
+  .tab.active {
+    @apply font-medium text-foreground after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:bg-foreground;
+  }
+
+  .json-block {
+    @apply min-h-full min-w-max p-4 font-mono text-[11px] leading-5 text-foreground;
+    tab-size: 2;
+  }
+
+  .log-line {
+    @apply grid grid-cols-[4.25rem_3.25rem_minmax(0,1fr)] gap-2 py-0.5 text-[11px] leading-5;
+  }
+
+  .log-line time {
+    @apply text-muted-foreground;
+  }
+
+  .log-line strong {
+    @apply font-medium text-muted-foreground;
+  }
+
+  .log-line.error strong,
+  .log-line.error span {
+    @apply text-red-600 dark:text-red-400;
+  }
+
+  .log-line.warning strong,
+  .log-line.warning span {
+    @apply text-amber-600 dark:text-amber-400;
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 z-50 grid place-items-center bg-black/40 p-4;
+  }
+
+  .modal-card {
+    @apply w-full overflow-hidden rounded-xl border bg-background shadow-2xl;
+  }
+
+  .modal-header {
+    @apply flex items-start gap-3 border-b p-5;
+  }
+
+  .modal-icon {
+    @apply grid size-9 shrink-0 place-items-center rounded-lg bg-muted;
+  }
+
+  .modal-icon svg {
+    @apply size-4;
+  }
+
+  .modal-footer {
+    @apply flex justify-end gap-2 border-t bg-muted/30 p-4;
+  }
+
+  .suite-progress {
+    @apply block h-1.5 w-full overflow-hidden rounded-full border-0 bg-muted;
+    appearance: none;
+  }
+
+  .suite-progress::-webkit-progress-bar {
+    background: var(--muted);
+  }
+
+  .suite-progress::-webkit-progress-value {
+    background: var(--foreground);
+  }
+
+  .suite-progress::-moz-progress-bar {
+    background: var(--foreground);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+  background-color: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+}

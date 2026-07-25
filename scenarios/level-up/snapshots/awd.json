@@ -1,0 +1,3222 @@
+{
+  "Player": {
+    "Name": "Level Up Test",
+    "Health": 100,
+    "Stamina": 266.0,
+    "Exhausted": false,
+    "Money": 50000,
+    "Location": "FarmHouse",
+    "Position": {
+      "X": 7,
+      "Y": 9
+    },
+    "FacingDirection": 3,
+    "Inventory": [
+      {
+        "Name": "Axe",
+        "Quantity": 1,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": "Hoe",
+        "Quantity": 1,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": "Watering Can",
+        "Quantity": 1,
+        "WaterLeft": 40,
+        "WaterCapacity": 40
+      },
+      {
+        "Name": "Pickaxe",
+        "Quantity": 1,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": "Scythe",
+        "Quantity": 1,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": "Rusty Sword",
+        "Quantity": 1,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": null,
+        "Quantity": null,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": null,
+        "Quantity": null,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": null,
+        "Quantity": null,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": null,
+        "Quantity": null,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": null,
+        "Quantity": null,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      },
+      {
+        "Name": null,
+        "Quantity": null,
+        "WaterLeft": null,
+        "WaterCapacity": null
+      }
+    ],
+    "CurrentInventory": {
+      "Index": 0,
+      "CurrentItem": "Axe"
+    },
+    "Professions": [],
+    "Skills": {
+      "Farming": 1,
+      "Mining": 0,
+      "Combat": 0,
+      "Fishing": 0,
+      "Foraging": 0
+    },
+    "DatingPartners": [],
+    "Spouse": []
+  },
+  "NPCs": [
+    {
+      "Name": "Cat_1",
+      "Location": "Farm",
+      "Friendship": 0,
+      "Position": [
+        53,
+        8
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Evelyn",
+      "Location": "JoshHouse",
+      "Friendship": 0,
+      "Position": [
+        2,
+        17
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "George",
+      "Location": "JoshHouse",
+      "Friendship": 0,
+      "Position": [
+        16,
+        22
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Alex",
+      "Location": "JoshHouse",
+      "Friendship": 0,
+      "Position": [
+        19,
+        5
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Emily",
+      "Location": "HaleyHouse",
+      "Friendship": 0,
+      "Position": [
+        16,
+        5
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Haley",
+      "Location": "HaleyHouse",
+      "Friendship": 0,
+      "Position": [
+        8,
+        7
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Jodi",
+      "Location": "SamHouse",
+      "Friendship": 0,
+      "Position": [
+        4,
+        5
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Sam",
+      "Location": "SamHouse",
+      "Friendship": 0,
+      "Position": [
+        22,
+        13
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Vincent",
+      "Location": "SamHouse",
+      "Friendship": 0,
+      "Position": [
+        10,
+        23
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Clint",
+      "Location": "Blacksmith",
+      "Friendship": 0,
+      "Position": [
+        3,
+        13
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Lewis",
+      "Location": "ManorHouse",
+      "Friendship": 0,
+      "Position": [
+        8,
+        5
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Abigail",
+      "Location": "SeedShop",
+      "Friendship": 0,
+      "Position": [
+        1,
+        9
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Caroline",
+      "Location": "SeedShop",
+      "Friendship": 0,
+      "Position": [
+        22,
+        5
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Pierre",
+      "Location": "SeedShop",
+      "Friendship": 0,
+      "Position": [
+        10,
+        20
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Gus",
+      "Location": "Saloon",
+      "Friendship": 0,
+      "Position": [
+        18,
+        6
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Pam",
+      "Location": "Trailer",
+      "Friendship": 0,
+      "Position": [
+        15,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Penny",
+      "Location": "Trailer",
+      "Friendship": 0,
+      "Position": [
+        4,
+        9
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Harvey",
+      "Location": "HarveyRoom",
+      "Friendship": 0,
+      "Position": [
+        21,
+        7
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Willy",
+      "Location": "Beach",
+      "Friendship": 0,
+      "Position": [
+        38,
+        36
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Elliott",
+      "Location": "ElliottHouse",
+      "Friendship": 0,
+      "Position": [
+        1,
+        5
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Linus",
+      "Location": "Mountain",
+      "Friendship": 0,
+      "Position": [
+        28,
+        9
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Demetrius",
+      "Location": "ScienceHouse",
+      "Friendship": 0,
+      "Position": [
+        19,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Maru",
+      "Location": "ScienceHouse",
+      "Friendship": 0,
+      "Position": [
+        2,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Robin",
+      "Location": "ScienceHouse",
+      "Friendship": 0,
+      "Position": [
+        21,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Sebastian",
+      "Location": "SebastianRoom",
+      "Friendship": 0,
+      "Position": [
+        10,
+        9
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Shane",
+      "Location": "Forest",
+      "Friendship": 0,
+      "Position": [
+        111,
+        25
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Wizard",
+      "Location": "WizardHouse",
+      "Friendship": 0,
+      "Position": [
+        3,
+        17
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Jas",
+      "Location": "AnimalShop",
+      "Friendship": 0,
+      "Position": [
+        4,
+        6
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Marnie",
+      "Location": "AnimalShop",
+      "Friendship": 0,
+      "Position": [
+        12,
+        14
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Leah",
+      "Location": "LeahHouse",
+      "Friendship": 0,
+      "Position": [
+        3,
+        7
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Dwarf",
+      "Location": "Mine",
+      "Friendship": 0,
+      "Position": [
+        43,
+        6
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Krobus",
+      "Location": "Sewer",
+      "Friendship": 0,
+      "Position": [
+        31,
+        17
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "Club",
+      "Friendship": 0,
+      "Position": [
+        8,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Sandy",
+      "Location": "SandyHouse",
+      "Friendship": 0,
+      "Position": [
+        2,
+        5
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Bouncer",
+      "Location": "SandyHouse",
+      "Friendship": 0,
+      "Position": [
+        17,
+        3
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Gunther",
+      "Location": "ArchaeologyHouse",
+      "Friendship": 0,
+      "Position": [
+        3,
+        8
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Marlon",
+      "Location": "AdventureGuild",
+      "Friendship": 0,
+      "Position": [
+        5,
+        11
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Henchman",
+      "Location": "WitchSwamp",
+      "Friendship": 0,
+      "Position": [
+        20,
+        29
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Birdie",
+      "Location": "IslandWest",
+      "Friendship": 0,
+      "Position": [
+        17,
+        58
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    },
+    {
+      "Name": "Mister Qi",
+      "Location": "QiNutRoom",
+      "Friendship": 0,
+      "Position": [
+        7,
+        4
+      ],
+      "isTalked": false,
+      "GiftsToday": 0
+    }
+  ],
+  "GameState": {
+    "Time": 740,
+    "DayOfMonth": 5,
+    "Season": "spring",
+    "Year": 1,
+    "Weather": "Sunny",
+    "PassingOut": false,
+    "FadeToBlack": false,
+    "EventUp": false,
+    "UsingTool": false
+  },
+  "Farm": {
+    "Animals": [
+      {
+        "Type": "White Chicken",
+        "Name": "Chicken_1",
+        "Position": {
+          "X": 3,
+          "Y": 5
+        },
+        "Friendship": 0,
+        "IsAdult": true,
+        "CurrentProduce": null,
+        "Happiness": 255,
+        "isTouched": false
+      }
+    ],
+    "Buildings": [
+      {
+        "type": "FarmHouse",
+        "position": "59, 12",
+        "isAnimalDoorOpen": false,
+        "isBowlFull": null,
+        "hayNumber": 0,
+        "id": "0a9a23c5-621e-44fc-a6ca-caa1666b821e",
+        "upgradeLevel": 0
+      },
+      {
+        "type": "Greenhouse",
+        "position": "25, 10",
+        "isAnimalDoorOpen": false,
+        "isBowlFull": null,
+        "hayNumber": 0,
+        "id": "60eedcdb-d737-4f60-a02a-e025336a5887",
+        "upgradeLevel": null
+      },
+      {
+        "type": "Shipping Bin",
+        "position": "71, 14",
+        "isAnimalDoorOpen": false,
+        "isBowlFull": null,
+        "hayNumber": 0,
+        "id": "c150b74c-eb95-4356-bb94-35df6ee21973",
+        "upgradeLevel": null
+      },
+      {
+        "type": "Pet Bowl",
+        "position": "53, 7",
+        "isAnimalDoorOpen": false,
+        "isBowlFull": false,
+        "hayNumber": 0,
+        "id": "ec78087e-42d9-4d89-b27e-6ea4d822b0ae",
+        "upgradeLevel": null
+      },
+      {
+        "type": "Silo",
+        "position": "70, 8",
+        "isAnimalDoorOpen": false,
+        "isBowlFull": null,
+        "hayNumber": 0,
+        "id": "8f13ce17-07a8-4392-9a07-8ef8f855ca27",
+        "upgradeLevel": null
+      },
+      {
+        "type": "Coop",
+        "position": "53, 12",
+        "isAnimalDoorOpen": false,
+        "isBowlFull": null,
+        "hayNumber": 0,
+        "id": "b03185ca-5d8d-447c-bdac-0bfd38c82810",
+        "upgradeLevel": null
+      }
+    ],
+    "Pets": [
+      {
+        "Type": "Cat",
+        "Name": "Cat_1",
+        "Position": {
+          "X": 53,
+          "Y": 8
+        },
+        "Friendship": 0,
+        "isTouched": false
+      }
+    ]
+  },
+  "CurrentMenuData": {
+    "type": "No Menu",
+    "message": null,
+    "currentPrizeTrack": null,
+    "dialogues": null,
+    "chats": null,
+    "shopMenuData": null,
+    "animalsMenuData": null,
+    "responses": null,
+    "bluePrints": null,
+    "ItemsInChest": null,
+    "areaId": null,
+    "areaName": null,
+    "specificBundlePage": null,
+    "selectedBundleId": null,
+    "options": null,
+    "bundles": null
+  },
+  "ScreenShot": null,
+  "Buildings": [],
+  "Crops": [],
+  "Exits": [
+    {
+      "target": "Farm",
+      "position": "3, 12"
+    }
+  ],
+  "ShopCounters": [
+    {
+      "name": "SeedShop Counter",
+      "position": "4, 18"
+    },
+    {
+      "name": "AnimalShop Counter",
+      "position": "12, 15"
+    },
+    {
+      "name": "JojaMart Counter",
+      "position": "10, 25"
+    },
+    {
+      "name": "Blacksmith Counter",
+      "position": "3, 14"
+    },
+    {
+      "name": "ScienceHouse Counter",
+      "position": "8, 19"
+    },
+    {
+      "name": "FishShop Counter",
+      "position": "5, 5"
+    }
+  ],
+  "MetaData": {
+    "ViewportSize": [
+      1460,
+      820
+    ],
+    "LocationName": "FarmHouse",
+    "MapSize": [
+      12,
+      12
+    ]
+  },
+  "CallBackData": {
+    "OnDayStarted": 1
+  },
+  "SurroundingsData": [
+    {
+      "position": [
+        0,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        0,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Budget TV",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Budget TV",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "House Plant",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        1,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Budget TV",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Budget TV",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        2,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Basic Window",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Basic Window",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        7
+      ],
+      "object_at_tile": "Chest",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": false
+    },
+    {
+      "position": [
+        4,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Oak Chair",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        4,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "'Little Tree'",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "'Little Tree'",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Oak Table",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Oak Table",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        5,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Oak Table",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Oak Table",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Red Cottage Rug",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Red Cottage Rug",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        6,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Red Cottage Rug",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Red Cottage Rug",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        7,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Brick Fireplace",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Red Cottage Rug",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Red Cottage Rug",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        8,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Brick Fireplace",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Bed",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Bed",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Bed",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        9,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Bed",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Bed",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "Bed",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        10,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        0
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        1
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        2
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        3
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        4
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        5
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        6
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        7
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        8
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        9
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        10
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        11,
+        11
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "",
+      "npc_info": "",
+      "placeable": true
+    },
+    {
+      "position": [
+        3,
+        12
+      ],
+      "object_at_tile": "",
+      "terrain_at_tile": "",
+      "building_info": "",
+      "tile_properties": "",
+      "crop_at_tile": null,
+      "debris_at_tile": "",
+      "furniture_at_tile": "",
+      "exit_info": "Farm",
+      "npc_info": "",
+      "placeable": false
+    }
+  ],
+  "Furnitures": [
+    {
+      "name": "Bed",
+      "position": "10, 9",
+      "boundingBox": {
+        "top": 8,
+        "bottom": 11,
+        "left": 9,
+        "right": 11
+      }
+    },
+    {
+      "name": "Oak Table",
+      "position": "5, 4",
+      "boundingBox": {
+        "top": 4,
+        "bottom": 6,
+        "left": 5,
+        "right": 7
+      }
+    },
+    {
+      "name": "House Plant",
+      "position": "1, 10",
+      "boundingBox": {
+        "top": 10,
+        "bottom": 11,
+        "left": 1,
+        "right": 2
+      }
+    },
+    {
+      "name": "Oak Chair",
+      "position": "4, 4",
+      "boundingBox": {
+        "top": 4,
+        "bottom": 5,
+        "left": 4,
+        "right": 5
+      }
+    },
+    {
+      "name": "Budget TV",
+      "position": "1, 4",
+      "boundingBox": {
+        "top": 4,
+        "bottom": 6,
+        "left": 1,
+        "right": 3
+      }
+    },
+    {
+      "name": "Basic Window",
+      "position": "3, 1",
+      "boundingBox": {
+        "top": 1,
+        "bottom": 3,
+        "left": 3,
+        "right": 4
+      }
+    },
+    {
+      "name": "Red Cottage Rug",
+      "position": "6, 8",
+      "boundingBox": {
+        "top": 8,
+        "bottom": 10,
+        "left": 6,
+        "right": 9
+      }
+    },
+    {
+      "name": "'Little Tree'",
+      "position": "5, 1",
+      "boundingBox": {
+        "top": 1,
+        "bottom": 3,
+        "left": 5,
+        "right": 6
+      }
+    },
+    {
+      "name": "Brick Fireplace",
+      "position": "8, 4",
+      "boundingBox": {
+        "top": 4,
+        "bottom": 5,
+        "left": 8,
+        "right": 10
+      }
+    }
+  ],
+  "CommunityCenterScrolls": []
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "../scenario.schema.json",
+  "formatVersion": 1,
+  "id": "level-up",
+  "name": "Farming level-up",
+  "description": "Stalley-v2 fixture with Farming level 1, 100 XP, and a pending level-up that appears after sleeping.",
+  "fixture": {
+    "saveFile": "StarDojo_406041616"
+  },
+  "observation": {
+    "surroundingsSize": -1
+  },
+  "expectedStart": {
+    "playerName": "Level Up Test",
+    "farmName": "Level Up",
+    "farmingLevel": 1,
+    "pendingLevel": [0, 1]
+  }
+}

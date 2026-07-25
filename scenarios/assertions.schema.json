@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Stalley Mod scenario assertions",
+  "type": "array",
+  "maxItems": 500,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "source", "path", "operator"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "source": {
+        "enum": ["observation", "action"]
+      },
+      "actionIndex": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "path": {
+        "type": "string",
+        "pattern": "^(|/.*)$"
+      },
+      "operator": {
+        "enum": ["equals", "notEquals", "exists", "notExists", "contains"]
+      },
+      "expected": true
+    },
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "source": {
+              "const": "action"
+            }
+          }
+        },
+        "then": {
+          "required": ["actionIndex"]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "operator": {
+              "enum": ["equals", "notEquals", "contains"]
+            }
+          }
+        },
+        "then": {
+          "required": ["expected"]
+        }
+      }
+    ]
+  }
+}
