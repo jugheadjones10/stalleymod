@@ -6,3 +6,9 @@ obj/
 .vs/
 .vscode/
 MyModLog*.txt
+__pycache__/
+*.py[cod]
+.coverage
+.venv/
+harness/frontend/node_modules/
+harness/frontend/dist/

@@ -1,0 +1,1 @@
+- Adhere to a simple, minimal style of code. Don't overcomplicate things. Prioritise succinctness. Don't try to catch errors before we actually experience them.
