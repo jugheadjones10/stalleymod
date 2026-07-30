@@ -14,7 +14,6 @@ using xTile.Dimensions;
 using StardewValley.Objects;
 using static ActionSpace.actions.Actions;
 using System.IO;
-using StardewValley.Objects;
 
 namespace ActionSpace.actions
 {

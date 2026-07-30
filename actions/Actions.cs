@@ -41,7 +41,6 @@ using StardewValley.GameData.Buildings;
 using System.Security.Cryptography.X509Certificates;
 using StardewValley.Enchantments;
 using StardewModdingAPI.Events;
-using MessagePack;
 using System.Text;
 using System.Threading.Tasks;
 using PeterO.Cbor;

@@ -131,7 +131,7 @@ export function ScenarioWorkspace(props: Props) {
   }, [busy, onMarkSnapshot, ready, replayExecuting, run.pendingSnapshot])
 
   return (
-    <main className="flex min-w-0 flex-1 flex-col">
+    <main className="flex min-h-0 min-w-0 flex-1 flex-col">
       <header className="flex min-h-14 shrink-0 flex-wrap items-center gap-2 border-b px-3 py-2">
         <div className="min-w-32 flex-1">
           <div className="flex items-center gap-2">
