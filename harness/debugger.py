@@ -248,7 +248,7 @@ class DebugSession:
             )
             self.thread.start()
 
-    def _capture(self, frame: FrameType) -> None:
+    def _capture(self, frame: FrameType, line: int | None = None) -> None:
         frames = []
         current: FrameType | None = frame
         while current is not None:
@@ -256,11 +256,11 @@ class DebugSession:
                 frames.append(
                     {
                         "function": current.f_code.co_name,
-                        "line": current.f_lineno,
+                        "line": line if current is frame and line else current.f_lineno,
                     }
                 )
             current = current.f_back
-        self.current_line = frame.f_lineno
+        self.current_line = line or frame.f_lineno
         self.stack = frames
         self.locals = {
             name: _safe_repr(value)
@@ -312,7 +312,15 @@ class DebugSession:
             with self.condition:
                 self.status = "stopped"
         except BaseException as error:
+            failure = None
+            traceback = error.__traceback__
+            while traceback:
+                if traceback.tb_frame.f_code.co_filename == self.filename:
+                    failure = traceback
+                traceback = traceback.tb_next
             with self.condition:
+                if failure:
+                    self._capture(failure.tb_frame, failure.tb_lineno)
                 self.error = f"{type(error).__name__}: {error}"
                 self.status = "failed"
         else:
