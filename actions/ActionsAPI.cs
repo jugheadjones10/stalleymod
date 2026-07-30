@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using StardewModdingAPI;
 using StardewValley;
 using Microsoft.Xna.Framework;
@@ -119,6 +120,15 @@ namespace ActionSpace.actions
             int targetY = int.Parse(y);
 
             return await MoveToTile(targetX, targetY, mod);
+        }
+
+        public static void set_player_position(string x, string y, string direction, Mod mod)
+        {
+            Game1.player.Position = new Vector2(
+                float.Parse(x, CultureInfo.InvariantCulture),
+                float.Parse(y, CultureInfo.InvariantCulture)
+            );
+            Game1.player.FacingDirection = int.Parse(direction);
         }
 
         public static async Task<bool> move_step(string direction, Mod mod)

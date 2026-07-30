@@ -510,6 +510,19 @@ class DebugController:
             timeout=timeout,
         )
         observation = _observation(raw_observation)
+        if target.checkpoint:
+            x, y = target.checkpoint.position
+            location = target.checkpoint.observation["location"]
+            tile_x, tile_y = target.checkpoint.observation["position"]
+            client.send(
+                f"warp%{location}%{tile_x}%{tile_y}",
+                timeout=timeout,
+            )
+            client.send(
+                f"set_player_position%{x}%{y}%{target.checkpoint.facing_direction}",
+                timeout=timeout,
+            )
+            observation = DebugActions(client.port, timeout).observe()
         if target.task_start and not target.checkpoint:
             for command in target.task_start.init_commands:
                 client.send(_init_command(command), timeout=timeout)

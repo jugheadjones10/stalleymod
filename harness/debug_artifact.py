@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import hashlib
 import json
+import xml.etree.ElementTree as element_tree
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -20,6 +21,8 @@ class DebugCheckpoint:
     path: Path
     save_name: str
     observation: dict[str, Any]
+    position: tuple[float, float]
+    facing_direction: int
 
 
 @dataclass(frozen=True)
@@ -164,11 +167,24 @@ def _load_checkpoint(run_dir: Path, metadata: dict[str, Any]) -> DebugCheckpoint
     save_path = (path / "save").resolve()
     if save_path.parent != path or not save_path.is_dir():
         raise DebugArtifactError("checkpoint save is missing")
+    try:
+        save_root = element_tree.parse(save_path / save_name).getroot()
+        player = save_root.find("player")
+        position = player.find("Position")
+        saved_position = (
+            float(position.findtext("X")),
+            float(position.findtext("Y")),
+        )
+        facing_direction = int(player.findtext("FacingDirection"))
+    except (AttributeError, OSError, TypeError, ValueError, element_tree.ParseError) as error:
+        raise DebugArtifactError("checkpoint player position is missing") from error
     return DebugCheckpoint(
         id=checkpoint_id,
         path=path,
         save_name=save_name,
         observation=observation if isinstance(observation, dict) else {},
+        position=saved_position,
+        facing_direction=facing_direction,
     )
 
 
