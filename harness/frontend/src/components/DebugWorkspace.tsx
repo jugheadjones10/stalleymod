@@ -9,10 +9,11 @@ import {
   RotateCcw,
   StepForward,
 } from "lucide-react"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { post, put, useDebug } from "../lib/api"
 import type { DebugState, Preview } from "../types"
 import { PreviewCanvas } from "./PreviewCanvas"
+import { PythonCode } from "./PythonCode"
 import { StatusBadge } from "./StatusBadge"
 
 interface DebugRequest {
@@ -52,7 +53,6 @@ export function DebugWorkspace({
 
   const target = debug?.target
   const session = debug?.session
-  const lines = useMemo(() => target?.source.split("\n") ?? [], [target?.source])
   const breakpoints = new Set(debug?.breakpoints ?? session?.breakpoints ?? [])
   const currentLine = target && session?.currentLine
     ? session.currentLine - target.sourceStartLine + 1
@@ -213,29 +213,15 @@ export function DebugWorkspace({
       )}
 
       <main className="grid min-h-0 flex-1 grid-cols-[minmax(28rem,3fr)_minmax(22rem,2fr)]">
-        <section className="min-h-0 overflow-auto border-r bg-code font-mono text-xs leading-5">
-          {lines.map((line, index) => {
-            const lineNumber = index + 1
-            const breakpoint = breakpoints.has(lineNumber)
-            const current = currentLine === lineNumber
-            return (
-              <div
-                key={lineNumber}
-                className={`grid min-w-max grid-cols-[2rem_3rem_minmax(0,1fr)] ${current ? "bg-amber-200/50 dark:bg-amber-800/30" : ""}`}
-              >
-                <button
-                  type="button"
-                  className="grid place-items-center border-r hover:bg-muted"
-                  aria-label={`${breakpoint ? "Remove" : "Add"} breakpoint on line ${lineNumber}`}
-                  onClick={() => void toggleBreakpoint(lineNumber)}
-                >
-                  {breakpoint && <span className="size-2.5 rounded-full bg-red-500" />}
-                </button>
-                <span className="select-none border-r pr-2 text-right text-muted-foreground">{lineNumber}</span>
-                <code className="whitespace-pre px-3">{line || " "}</code>
-              </div>
-            )
-          })}
+        <section className="debug-code-panel min-h-0 overflow-auto border-r">
+          {target && (
+            <PythonCode
+              source={target.source}
+              breakpoints={breakpoints}
+              currentLine={currentLine}
+              onToggleBreakpoint={(line) => void toggleBreakpoint(line)}
+            />
+          )}
         </section>
 
         <aside className="grid min-h-0 grid-rows-[minmax(12rem,3fr)_minmax(10rem,2fr)]">

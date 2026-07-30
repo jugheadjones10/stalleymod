@@ -188,6 +188,56 @@
     tab-size: 2;
   }
 
+  .debug-code {
+    @apply m-0 min-h-full min-w-max py-2 font-mono text-xs leading-5;
+    tab-size: 4;
+  }
+
+  .debug-code-panel {
+    background: #282828;
+  }
+
+  .debug-code-line {
+    @apply grid min-w-max grid-cols-[2rem_3rem_minmax(0,1fr)];
+  }
+
+  .debug-code-line:hover {
+    background: #32302f;
+  }
+
+  .debug-code-line.current {
+    background: #3c3836;
+    box-shadow: inset 3px 0 #fabd2f;
+  }
+
+  .debug-breakpoint {
+    @apply grid place-items-center border-r outline-none;
+    border-color: #504945;
+  }
+
+  .debug-breakpoint:hover {
+    background: #504945;
+  }
+
+  .debug-breakpoint:focus-visible {
+    box-shadow: inset 0 0 0 2px #fabd2f;
+  }
+
+  .debug-breakpoint-dot {
+    @apply size-2.5 rounded-full;
+    background: #fb4934;
+  }
+
+  .debug-line-number {
+    @apply select-none border-r pr-2 text-right;
+    border-color: #504945;
+    color: #7c6f64;
+  }
+
+  .debug-line-content {
+    @apply block whitespace-pre px-3;
+  }
+
   .log-line {
     @apply grid grid-cols-[4.25rem_3.25rem_minmax(0,1fr)] gap-2 py-0.5 text-[11px] leading-5;
   }
