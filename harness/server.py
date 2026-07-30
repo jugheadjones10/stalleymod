@@ -151,6 +151,7 @@ def _ensure_frontend_build() -> None:
         _FRONTEND_ROOT / "vite.config.ts",
         _FRONTEND_ROOT / "index.html",
         *_FRONTEND_ROOT.joinpath("src").rglob("*"),
+        *_FRONTEND_ROOT.joinpath("public").rglob("*"),
     ]
     newest_source = max(
         (path.stat().st_mtime for path in sources if path.is_file()),

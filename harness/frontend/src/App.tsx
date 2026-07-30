@@ -1,4 +1,4 @@
-import { FlaskConical, Import, PlaySquare, Trash2 } from "lucide-react"
+import { Import, PlaySquare, Trash2 } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { ActionTimeline } from "./components/ActionTimeline"
 import { ConfirmDialog } from "./components/ConfirmDialog"
@@ -30,9 +30,7 @@ function EmptyState({ error }: { error?: string }) {
   return (
     <main className="grid min-w-0 flex-1 place-items-center">
       <div className="max-w-sm text-center">
-        <span className="mx-auto grid size-10 place-items-center rounded-xl bg-muted">
-          <FlaskConical className="size-5 text-muted-foreground" />
-        </span>
+        <img src="/duck.png" alt="" className="mx-auto size-10 opacity-60 [image-rendering:pixelated]" />
         <h1 className="mt-3 text-sm font-medium">{error ? "The harness could not start" : "Choose a scenario"}</h1>
         <p className="mt-1 text-sm leading-6 text-muted-foreground">{error ?? "Select a fixture from the sidebar, or import a local Stardew save."}</p>
       </div>

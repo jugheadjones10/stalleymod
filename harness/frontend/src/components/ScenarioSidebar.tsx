@@ -1,5 +1,4 @@
 import {
-  FlaskConical,
   Import,
   PanelLeftClose,
   PanelLeftOpen,
@@ -52,9 +51,7 @@ export function ScenarioSidebar({
       >
         {!collapsed && (
           <>
-            <span className="grid size-6 place-items-center rounded-md bg-foreground text-background">
-              <FlaskConical className="size-3.5" />
-            </span>
+            <img src="/duck.png" alt="" className="size-5 [image-rendering:pixelated]" />
             <span className="text-sm font-semibold">Stalley Harness</span>
           </>
         )}
