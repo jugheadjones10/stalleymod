@@ -245,6 +245,7 @@ namespace observeSpaceTest
             }
         }
 
+        // waitForReady() should automatically wait only for states that will finish by themselves.
         private async Task waitForReady(string methodName)
         {
             var isObservation = methodName == "observe" || methodName == "get_surroundings" || methodName == "observe_v2" || methodName == "observe_v2_light";
@@ -271,16 +272,21 @@ namespace observeSpaceTest
                     continue;
                 }
 
+                if (isObservation || methodName == "pause")
+                {
+                    break;
+                }
+
+                if (activeClickableMenu is not null && methodName == "choose_option")
+                {
+                    break;
+                }
+
                 if (fading)
                 {
                     Monitor.Log($"{methodName} waiting for location transition", LogLevel.Debug);
                     await Task.Delay(100);
                     continue;
-                }
-
-                if (isObservation || methodName == "pause")
-                {
-                    break;
                 }
 
                 var farmerBusy = usingTool || isEating || paused || usingWeapon || toolAnimation || passingOut;
